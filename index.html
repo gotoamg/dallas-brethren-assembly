@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Go to https://dallasbrethrenassembly.org/ and browse the entire live website. Identify all pages, sections, menus, submenus, forms, ministries, service detai...">
+  <meta name="keywords" content="">
+  <meta property="og:title" content="Dallas Brethren Assembly">
+  <meta property="og:description" content="Go to https://dallasbrethrenassembly.org/ and browse the entire live website. Identify all pages, sections, menus, submenus, forms, ministries, service detai...">
+  <meta property="og:type" content="website">
+  <title>Dallas Brethren Assembly</title>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-primary: #0F172A;
+      --color-secondary: #64748B;
+      --color-accent: #F8FAFC;
+      --color-background: #FFFFFF;
+      --color-text: #64748B;
+      --color-muted: #F8FAFC;
+      --border-radius: 8px;
+      --font-heading: Georgia, serif;
+      --font-body: Open Sans, sans-serif;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: var(--font-body);
+      background-color: var(--color-background);
+      color: var(--color-text);
+      line-height: 1.6;
+      font-size: 16px;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    
+    h1 { font-size: 48px; }
+    h2 { font-size: 36px; }
+    h3 { font-size: 24px; }
+    h4 { font-size: 20px; }
+    
+    .btn-primary {
+      display: inline-block;
+      background: var(--color-primary);
+      color: white;
+      padding: 12px 32px;
+      border-radius: var(--border-radius);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      display: inline-block;
+      background: transparent;
+      color: var(--color-primary);
+      padding: 12px 32px;
+      border-radius: var(--border-radius);
+      border: 2px solid var(--color-primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    
+    .section {
+      padding: 80px 0;
+    }
+    
+    .section-alt {
+      background: var(--color-muted);
+    }
+    
+    .text-center { text-align: center; }
+    
+    .grid { display: grid; gap: 24px; }
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    
+    .card {
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 24px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15);
+    }
+    
+    .team-card {
+      text-align: center;
+    }
+    
+    .team-card img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 0 auto 16px;
+      border: 4px solid var(--color-primary);
+    }
+    
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--color-primary);
+      color: white;
+      border-radius: var(--border-radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-size: 24px;
+    }
+    
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    
+    .gallery-item img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: var(--border-radius);
+      transition: transform 0.3s ease;
+    }
+    
+    .gallery-item:hover img {
+      transform: scale(1.05);
+    }
+    
+    .testimonial-card {
+      position: relative;
+      padding-top: 40px;
+    }
+    
+    .testimonial-card::before {
+      content: '"';
+      position: absolute;
+      top: 0;
+      left: 24px;
+      font-size: 80px;
+      color: var(--color-primary);
+      opacity: 0.2;
+      line-height: 1;
+    }
+    
+    .hero {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      background-size: cover;
+      background-position: center;
+    }
+    
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.3));
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      color: white;
+    }
+    
+    .hero h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      margin-bottom: 24px;
+    }
+    
+    .hero p {
+      font-size: 1.25rem;
+      opacity: 0.9;
+      margin-bottom: 32px;
+      max-width: 600px;
+    }
+    
+    .cta-section {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+      color: white;
+      text-align: center;
+    }
+    
+    .cta-section h2 {
+      color: white;
+      margin-bottom: 16px;
+    }
+    
+    .cta-section .btn-primary {
+      background: white;
+      color: var(--color-primary);
+    }
+    
+    .pricing-card {
+      text-align: center;
+    }
+    
+    .pricing-card.featured {
+      border: 2px solid var(--color-primary);
+      transform: scale(1.05);
+    }
+    
+    .price {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    
+    .price-period {
+      font-size: 1rem;
+      opacity: 0.7;
+    }
+    
+    .columns-section {
+      display: grid;
+      gap: 40px;
+      align-items: center;
+    }
+    
+    .columns-section.cols-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .columns-section img {
+      width: 100%;
+      border-radius: var(--border-radius);
+    }
+    
+    html { scroll-behavior: smooth; }
+
+    /* Scroll reveal animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal .card {
+      opacity: 0;
+      transform: translateY(25px) scale(0.97);
+    }
+    .reveal.visible .card {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    /* Hero slider */
+    .hero-slider {
+      position: relative;
+      min-height: 80vh;
+      overflow: hidden;
+    }
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 1.2s ease;
+      display: flex;
+      align-items: center;
+      background-size: cover;
+      background-position: center;
+    }
+    .hero-slide.active {
+      opacity: 1;
+      z-index: 1;
+    }
+    .hero-slide .hero-content {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+    }
+    .hero-slide.active .hero-content {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .hero-dots {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      display: flex;
+      gap: 10px;
+    }
+    .hero-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 0;
+    }
+    .hero-dot.active {
+      background: white;
+      width: 28px;
+      border-radius: 5px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+    .btn-secondary:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      background: rgba(255,255,255,0.1);
+    }
+    header a { transition: color 0.3s ease, transform 0.2s ease; }
+    header a:hover { opacity: 0.8; }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.75rem;
+      cursor: pointer;
+      color: var(--color-text);
+      padding: 4px 8px;
+      line-height: 1;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+      .section { padding: 60px 0; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .columns-section.cols-2 { grid-template-columns: 1fr; }
+      .mobile-menu-btn { display: block; }
+      nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        padding: 16px 24px;
+        gap: 16px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        border-top: 1px solid #eee;
+      }
+      nav.nav-open {
+        display: flex;
+      }
+    }
+  </style>
+</head>
+<body>
+  
+  <header style="position: sticky; top: 0; background: white; border-bottom: 1px solid #eee; z-index: 1000;">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; padding-top: 16px; padding-bottom: 16px;">
+      <a href="/dallas-brethren-assembly/" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--color-primary);">
+        <img src="https://foemfjmfrulilubshnwn.supabase.co/storage/v1/object/public/site-images/8d899164-196e-4bcc-8b6f-7a5b62b61fc8/dba_logo31.png" alt="Dallas Brethren Assembly" style="height: 40px;">
+        <span style="font-size: 1.25rem; font-weight: 700;">Dallas Brethren Assembly</span>
+      </a>
+      <button class="mobile-menu-btn" onclick="document.querySelector('header nav').classList.toggle('nav-open')" aria-label="Toggle menu">&#9776;</button>
+      <nav style="display: flex; gap: 32px; align-items: center;">
+        <a href="/dallas-brethren-assembly/" style="color: inherit; text-decoration: none; font-weight: 500; transition: color 0.2s; ">Home</a><a href="/dallas-brethren-assembly/about/" style="color: inherit; text-decoration: none; font-weight: 500; transition: color 0.2s; ">About</a><a href="/dallas-brethren-assembly/bible-insights/" style="color: inherit; text-decoration: none; font-weight: 500; transition: color 0.2s; ">Bible Insights</a><a href="/dallas-brethren-assembly/sermon/" style="color: inherit; text-decoration: none; font-weight: 500; transition: color 0.2s; ">Sermons</a><a href="/dallas-brethren-assembly/contact/" style="color: inherit; text-decoration: none; font-weight: 500; transition: color 0.2s; ">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-slider" data-autoplay="5000" id="hero">
+            <div class="hero-slide active" data-slide="0" style="background-image: url('https://foemfjmfrulilubshnwn.supabase.co/storage/v1/object/public/site-images/11531f8e-9bf2-4f89-ad06-e6a543ef3694/church.webp'); background-position: 56% 50%;">
+              <div class="hero-overlay" style="background: #000000; opacity: 0.5;"></div>
+              <div class="container hero-content">
+                <h1>Welcome Home to Dallas Brethren Assembly</h1>
+                <p>Gathering in faith, growing in grace, and serving our community with the love of Christ.</p>
+                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                  <a href="#contact" class="btn-primary">Join Us This Sunday</a>
+                  <a href="#about" class="btn-secondary" style="color: white; border-color: white;">Learn More About Us</a>
+                </div>
+              </div>
+            </div>
+<div class="hero-slide " data-slide="1" style="background-image: url('https://foemfjmfrulilubshnwn.supabase.co/storage/v1/object/public/site-images/11531f8e-9bf2-4f89-ad06-e6a543ef3694/church.webp'); background-position: 71% 38%;">
+              <div class="hero-overlay" style="background: #000000; opacity: 0.5;"></div>
+              <div class="container hero-content">
+                <h1>Welcome Home to Dallas Brethren Assembly</h1>
+                <p>Gathering in faith, growing in grace, and serving our community with the love of Christ.</p>
+                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                  
+                  
+                </div>
+              </div>
+            </div>
+<div class="hero-slide " data-slide="2" style="background-image: url('https://foemfjmfrulilubshnwn.supabase.co/storage/v1/object/public/site-images/11531f8e-9bf2-4f89-ad06-e6a543ef3694/slide3.webp'); background-position: 36% 43%;">
+              <div class="hero-overlay" style="background: #000000; opacity: 0.5;"></div>
+              <div class="container hero-content">
+                <h1>Welcome Home to Dallas Brethren Assembly</h1>
+                <p>Gathering in faith, growing in grace, and serving our community with the love of Christ.</p>
+                <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                  
+                  
+                </div>
+              </div>
+            </div>
+            <div class="hero-dots">
+            <button class="hero-dot active" data-dot="0" aria-label="Go to slide 1"></button><button class="hero-dot " data-dot="1" aria-label="Go to slide 2"></button><button class="hero-dot " data-dot="2" aria-label="Go to slide 3"></button>
+          </div>
+          </section>
+        <section id="home-overview" class="section section-alt">
+          <div class="container">
+            <div class="grid grid-2" style="align-items: center;">
+              <div>
+                <h2 style="font-size: 2.5rem; margin-bottom: 24px;">Welcome to Dallas Brethren Assembly</h2>
+                <div style="font-size: 1.1rem; opacity: 0.8; margin-bottom: 16px;">Hello, Warm greetings to you in the name of our Lord and Savior Jesus Christ. We are so glad that you are here.Our goal is to follow the pattern of the early New Testament church as recorded in the Bible. We have the observance of the Lord’s Supper instituted by the Lord, Sunday school, and word ministry every week. We as a local church stand for the edification of the believers, and gospel proclamation.You are invited to visit us and consider becoming a member here where you can grow spiritually. No matter what, remember this truth -God loves you and He has a wonderful and beautiful plan for your life. DBA is a church that wants to communicate God’s loving plan & purpose for your life.</div>
+                
+              </div>
+              <div><img src="https://foemfjmfrulilubshnwn.supabase.co/storage/v1/object/public/site-images/11531f8e-9bf2-4f89-ad06-e6a543ef3694/outreach.webp" alt="Welcome to Dallas Brethren Assembly" style="width: 100%; border-radius: 12px;"></div>
+            </div>
+          </div>
+        </section>
+      
+
+        <section id="weekly-worship" class="section">
+          <div class="container">
+            <div class="text-center" style="margin-bottom: 48px;">
+              <h2 style="font-size: 2.5rem; margin-bottom: 16px;">Join Us for Worship This Week</h2>
+              <p style="font-size: 1.1rem; opacity: 0.7; max-width: 600px; margin: 0 auto;">We gather weekly to celebrate the Lord's Supper, engage in fervent prayer, and delve into the timeless truths of God's Word. Our services are designed to enrich your spiritual life and provide a refreshing encounter with God. We look forward to welcoming you and sharing in the joy of Christ together.</p>
+            </div>
+            <div class="grid grid-3">
+              
+                <div class="card">
+                  <div class="feature-icon">🗓️</div>
+                  <img src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=600&q=80" alt="" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 16px;">
+                  <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Sunday Morning Worship</h3>
+                  <p style="opacity: 0.7;">Our main gathering includes a time of worship, communion, and a message from the Bible. All are welcome to participate.</p>
+                </div>
+              
+                <div class="card">
+                  <div class="feature-icon">⏰</div>
+                  <img src="https://images.unsplash.com/photo-1552581234-26160f608093?w=600&q=80" alt="" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 16px;">
+                  <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Time:</h3>
+                  <p style="opacity: 0.7;"><ul><li><b>Sunday Bible School 9:30 AM – 9:55 AM </b></li><li><b>Worship &amp; Lord’s Supper 10:00 AM – 10:45 AM</b></li><li><b>Singing 11.05 AM – 11:15 AM</b></li><li><b>Word Ministry 11.15 AM – 11.40 PM</b></li></ul></p>
+                </div>
+              
+                <div class="card">
+                  <div class="feature-icon">📍</div>
+                  <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 16px;">
+                  <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Location:</h3>
+                  <p style="opacity: 0.7;"> 2011 Parkside Ave,Irving, TX. 75061</p>
+                </div>
+              
+            </div>
+          </div>
+        </section>
+      
+
+        <section id="featured-ministries" class="section">
+          <div class="container">
+            <div class="text-center" style="margin-bottom: 48px;">
+              <h2 style="font-size: 2.5rem; margin-bottom: 16px;">Growing Together in Faith</h2>
+              <p style="font-size: 1.1rem; opacity: 0.7; max-width: 600px; margin: 0 auto;">Beyond our Sunday services, Dallas Brethren Assembly offers various ministries designed to nurture faith at every stage of life. From engaging children's programs to insightful adult Bible studies, there's a place for everyone to belong and grow.</p>
+            </div>
+            <div class="grid grid-3">
+              
+                <div class="card">
+                  <div class="feature-icon">👧</div>
+                  <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&q=80" alt="" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 16px;">
+                  <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Children's Ministry</h3>
+                  <p style="opacity: 0.7;">Teaching our youngest members about God's love through engaging lessons and activities.</p>
+                </div>
+              
+                <div class="card">
+                  <div class="feature-icon">📚</div>
+                  <img src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=600&q=80" alt="" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 16px;">
+                  <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Adult Bible Studies</h3>
+                  <p style="opacity: 0.7;">Deepening our understanding of scripture through regular, interactive study groups.</p>
+                </div>
+              
+                <div class="card">
+                  <div class="feature-icon">🤝</div>
+                  <img src="https://images.unsplash.com/photo-1552581234-26160f608093?w=600&q=80" alt="" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 16px;">
+                  <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Community Outreach</h3>
+                  <p style="opacity: 0.7;">Serving our neighbors and sharing the Gospel through local initiatives and partnerships.</p>
+                </div>
+              
+            </div>
+          </div>
+        </section>
+      
+
+        <section id="home-cta" class="section cta-section">
+          <div class="container text-center">
+            <h2 style="font-size: 2.5rem; margin-bottom: 16px;">Experience the Warmth of Our Community</h2>
+            <p style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 32px; max-width: 600px; margin-left: auto; margin-right: auto;">We invite you to join us and discover a place where faith grows and lives are transformed. We can't wait to meet you!</p>
+            <a href="#contact" class="btn-primary">Get Started</a>
+          </div>
+        </section>
+      
+
+        <section id="about-us" class="section section-alt">
+          <div class="container">
+            <div class="grid grid-2" style="align-items: center;">
+              <div>
+                <h2 style="font-size: 2.5rem; margin-bottom: 24px;">Our Journey: A Legacy of Faith and Fellowship</h2>
+                <div style="font-size: 1.1rem; opacity: 0.8; margin-bottom: 16px;">Dallas Brethren Assembly began with a heartfelt desire to establish a community of believers dedicated to the simple, yet profound, principles of New Testament Christianity.  From our humble beginnings in [Year of Founding], we have been steadfast in our commitment to biblical teaching, the fellowship of believers, the breaking of bread, and prayer. Over the decades, we have seen countless lives touched by the grace of God and have been blessed to witness families grow in faith within our walls. Our history is a testament to God's faithfulness and the enduring power of His Word.
+
+We believe in the priesthood of all believers, valuing every member's contribution to the body of Christ. Our gatherings are characterized by a spirit of mutual edification and a focus on Christ as the head of the church. We strive to be a beacon of light in Dallas, sharing the hope of the Gospel through our lives and our words.
+
+Our mission is to glorify God by making disciples who love God, love each other, and love the world. We are called to teach the whole counsel of God, to worship Him in spirit and truth, and to serve our community with compassion and integrity. We envision a church where every individual is equipped to live a life that honors God and makes a lasting impact for His kingdom.</div>
+                
+              </div>
+              <div><img src="https://foemfjmfrulilubshnwn.supabase.co/storage/v1/object/public/site-images/8d899164-196e-4bcc-8b6f-7a5b62b61fc8/church%20(1).webp" alt="Our Journey: A Legacy of Faith and Fellowship" style="width: 100%; border-radius: 12px;"></div>
+            </div>
+          </div>
+        </section>
+      
+
+        <section id="worship-details" class="section">
+          <div class="container">
+            <div class="text-center" style="margin-bottom: 48px;">
+              <h2 style="font-size: 2.5rem; margin-bottom: 16px;">Our Worship Gatherings</h2>
+              <p style="font-size: 1.1rem; opacity: 0.7; max-width: 600px; margin: 0 auto;">Our weekly gatherings are the heartbeat of our community, a time when we come together as one body to worship God and be nourished by His Word. We invite you to experience the warmth of our fellowship and the depth of our biblical teaching.</p>
+            </div>
+            <div class="grid grid-3">
+              
+                <div class="card">
+                  <div class="feature-icon">🌅</div>
+                  <img src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=600&q=80" alt="" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 16px;">
+                  <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Sunday Morning Worship</h3>
+                  <p style="opacity: 0.7;">Our primary service begins promptly at 10:00 AM. This gathering includes a time of open worship and prayer, a reflection on the Lord's Supper, and a practical, expository message from the Bible. We conclude around 11:30 AM, followed by a time of fellowship.</p>
+                </div>
+              
+                <div class="card">
+                  <div class="feature-icon">🍞</div>
+                  <img src="https://images.unsplash.com/photo-1552581234-26160f608093?w=600&q=80" alt="" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 16px;">
+                  <h3 style="font-size: 1.25rem; margin-bottom: 12px;">The Lord's Supper</h3>
+                  <p style="opacity: 0.7;">Central to our worship, the Lord's Supper is observed weekly, reminding us of Christ's sacrifice and resurrection. All who believe in Jesus Christ as their Lord and Savior are welcome to participate.</p>
+                </div>
+              
+                <div class="card">
+                  <div class="feature-icon">📖</div>
+                  <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 16px;">
+                  <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Bible Teaching Focus</h3>
+                  <p style="opacity: 0.7;">We are committed to the systematic teaching of the Bible, verse by verse and book by book, to provide a deeper understanding of God's truth and its application to our daily lives.</p>
+                </div>
+              
+                <div class="card">
+                  <div class="feature-icon">☕</div>
+                  <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&q=80" alt="" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 16px;">
+                  <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Fellowship</h3>
+                  <p style="opacity: 0.7;">Following our service, we encourage everyone to stay for coffee and light refreshments, providing an excellent opportunity to connect with one another and build lasting relationships.</p>
+                </div>
+              
+                <div class="card">
+                  <div class="feature-icon">📍</div>
+                  <img src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=600&q=80" alt="" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 16px;">
+                  <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Location & Parking</h3>
+                  <p style="opacity: 0.7;">Dallas Brethren Assembly is located at 123 Christian Way, Dallas, TX 75201. We offer ample free parking on-site. Our facility is easily accessible, and we have dedicated spaces for visitors.</p>
+                </div>
+              
+            </div>
+          </div>
+        </section>
+      
+
+        <section id="ministries-overview" class="section">
+          <div class="container">
+            <div class="text-center" style="margin-bottom: 48px;">
+              <h2 style="font-size: 2.5rem; margin-bottom: 16px;">Ministries for Every Age and Stage</h2>
+              <p style="font-size: 1.1rem; opacity: 0.7; max-width: 600px; margin: 0 auto;">At Dallas Brethren Assembly, we believe that spiritual growth is a lifelong journey best pursued in community. Our ministries are designed to support and strengthen individuals and families at every stage of their walk with Christ.</p>
+            </div>
+            <div class="grid grid-3">
+              
+                <div class="card">
+                  <div class="feature-icon">📚</div>
+                  <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&q=80" alt="" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 16px;">
+                  <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Adult Bible Studies & Prayer Groups</h3>
+                  <p style="opacity: 0.7;">Engage in deeper study of God's Word and fervent prayer with fellow believers. Groups meet at various times throughout the week, fostering rich discussion and spiritual encouragement.</p>
+                </div>
+              
+                <div class="card">
+                  <div class="feature-icon">🧒</div>
+                  <img src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=600&q=80" alt="" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 16px;">
+                  <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Children's Ministry (Ages 0-12)</h3>
+                  <p style="opacity: 0.7;">Our dedicated Children's Ministry provides a safe, fun, and educational environment where kids learn about Jesus through age-appropriate lessons, songs, and activities during our Sunday service.</p>
+                </div>
+              
+                <div class="card">
+                  <div class="feature-icon">teenager</div>
+                  <img src="https://images.unsplash.com/photo-1552581234-26160f608093?w=600&q=80" alt="" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 16px;">
+                  <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Youth Ministry (Ages 13-18)</h3>
+                  <p style="opacity: 0.7;">Our Youth Ministry encourages teenagers to grow in their faith, build strong friendships, and navigate life's challenges with a biblical worldview through regular gatherings, events, and mentorship.</p>
+                </div>
+              
+                <div class="card">
+                  <div class="feature-icon">🌍</div>
+                  <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80" alt="" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 16px;">
+                  <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Community Outreach & Missions</h3>
+                  <p style="opacity: 0.7;">We are passionate about sharing God's love beyond our walls. Join us in various local outreach initiatives and support our global mission efforts to spread the Gospel worldwide.</p>
+                </div>
+              
+                <div class="card">
+                  <div class="feature-icon">🎉</div>
+                  <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&q=80" alt="" style="width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 16px;">
+                  <h3 style="font-size: 1.25rem; margin-bottom: 12px;">Fellowship Events</h3>
+                  <p style="opacity: 0.7;">Throughout the year, we host various social gatherings, potlucks, and special events designed to build community, foster friendships, and create lasting memories.</p>
+                </div>
+              
+            </div>
+          </div>
+        </section>
+      
+
+        <section id="messages-archive" class="section">
+          <div class="container">
+            <div class="text-center" style="margin-bottom: 48px;">
+              <h2 style="font-size: 2.5rem; margin-bottom: 16px;">Messages & Media</h2>
+              
+            </div>
+            <div class="gallery-grid">
+              
+                <div class="gallery-item">
+                  <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80" alt="">
+                </div>
+              
+                <div class="gallery-item">
+                  <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600&q=80" alt="">
+                </div>
+              
+            </div>
+          </div>
+        </section>
+      
+
+        <section id="events-calendar" class="section section-alt">
+          <div class="container">
+            <h2 style="font-size: 2.5rem; margin-bottom: 24px; text-align: center;">Upcoming Events</h2>
+            <div style="max-width: 800px; margin: 0 auto;">Our calendar is filled with opportunities for fellowship, spiritual growth, and service. Mark your calendars and join us for these special gatherings!</div>
+            
+          </div>
+        </section>
+      
+
+        <section id="contact-us" class="section section-alt">
+          <div class="container">
+            <div class="grid grid-2" style="gap: 60px;">
+              <div>
+                <h2 style="font-size: 2.5rem; margin-bottom: 24px;">Connect With Us</h2>
+                <p style="opacity: 0.7; margin-bottom: 32px;"></p>
+                
+                
+                
+              </div>
+              <div>
+                <form class="card" style="display: flex; flex-direction: column; gap: 16px;">
+                  <input type="text" placeholder="Your Name" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
+                  <input type="email" placeholder="Your Email" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
+                  <textarea placeholder="Your Message" rows="4" style="padding: 12px 16px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; resize: vertical;"></textarea>
+                  <button type="submit" class="btn-primary">Send Message</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+      
+
+        <section id="new-visitor-info" class="section cta-section">
+          <div class="container text-center">
+            <h2 style="font-size: 2.5rem; margin-bottom: 16px;">A Special Welcome for Our Guests</h2>
+            <p style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 32px; max-width: 600px; margin-left: auto; margin-right: auto;">We understand that visiting a new church can sometimes feel a little overwhelming. Our desire is for you to feel comfortable and welcomed from the moment you arrive. Expect a warm greeting, a friendly atmosphere, and a service focused on the worship of God and the teaching of His Word. There's no dress code, just come as you are. We have age-appropriate ministries for children during the service, and our ushers are always available to answer any questions you may have. We can't wait to meet you!<img src="https://foemfjmfrulilubshnwn.supabase.co/storage/v1/object/public/site-images/8d899164-196e-4bcc-8b6f-7a5b62b61fc8/IMG_8416.webp"></p>
+            <a href="#contact" class="btn-primary">Get Started</a>
+          </div>
+        </section>
+      
+
+        <section id="give-online" class="section">
+          <div class="container">
+            <div class="text-center" style="margin-bottom: 48px;">
+              <h2 style="font-size: 2.5rem; margin-bottom: 16px;">Give Online</h2>
+              
+            </div>
+            <div class="grid grid-3">
+              
+            </div>
+          </div>
+        </section>
+      
+  </main>
+
+  
+  <footer style="background: #1f2937; color: white; padding: 60px 0;">
+    <div class="container">
+      <div class="grid grid-4" style="margin-bottom: 40px;">
+        <div>
+          <h3 style="font-size: 1.25rem; margin-bottom: 16px; color: white;">Dallas Brethren Assembly</h3>
+          <p style="opacity: 0.7; font-size: 0.9rem;">Gathering in Faith, Growing in Grace, Serving with Love.</p>
+        </div>
+        
+      </div>
+      <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; text-align: center; opacity: 0.7; font-size: 0.9rem;">
+        <p>&copy; 2026 Dallas Brethren Assembly. All rights reserved.</p>
+        <p>© 2024 Dallas Brethren Assembly. All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+  
+<script>
+document.querySelectorAll('.dropdown-wrapper').forEach(function(wrapper) {
+  wrapper.addEventListener('mouseenter', function() {
+    this.querySelector('.dropdown-menu').style.display = 'block';
+  });
+  wrapper.addEventListener('mouseleave', function() {
+    this.querySelector('.dropdown-menu').style.display = 'none';
+  });
+});
+</script>
+<script>
+// Hero slider
+(function(){
+  var slider = document.querySelector('.hero-slider');
+  if (!slider) return;
+  var slides = slider.querySelectorAll('.hero-slide');
+  var dots = slider.querySelectorAll('.hero-dot');
+  if (slides.length <= 1) return;
+  var current = 0;
+  var speed = parseInt(slider.getAttribute('data-autoplay')) || 5000;
+  var paused = false;
+
+  function goTo(idx) {
+    slides[current].classList.remove('active');
+    if (dots[current]) dots[current].classList.remove('active');
+    current = idx % slides.length;
+    // Re-trigger text entrance animation
+    var content = slides[current].querySelector('.hero-content');
+    if (content) { content.style.transition = 'none'; content.style.opacity = '0'; content.style.transform = 'translateY(30px)'; }
+    slides[current].classList.add('active');
+    if (dots[current]) dots[current].classList.add('active');
+    if (content) { setTimeout(function(){ content.style.transition = ''; content.style.opacity = ''; content.style.transform = ''; }, 50); }
+  }
+
+  // Parallax effect on hero
+  window.addEventListener('scroll', function(){
+    var scrollY = window.pageYOffset;
+    slides.forEach(function(s){ s.style.backgroundPositionY = 'calc(50% + ' + (scrollY * 0.3) + 'px)'; });
+  }, { passive: true });
+
+  var timer = setInterval(function(){ if (!paused) goTo(current + 1); }, speed);
+
+  dots.forEach(function(dot, i) {
+    dot.addEventListener('click', function(){ goTo(i); clearInterval(timer); timer = setInterval(function(){ if (!paused) goTo(current + 1); }, speed); });
+  });
+
+  slider.addEventListener('mouseenter', function(){ paused = true; });
+  slider.addEventListener('mouseleave', function(){ paused = false; });
+})();
+
+// Scroll reveal
+(function(){
+  var sections = document.querySelectorAll('.section, .section-alt');
+  sections.forEach(function(s){ s.classList.add('reveal'); });
+
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        // Stagger cards inside
+        var cards = entry.target.querySelectorAll('.card');
+        cards.forEach(function(card, i){
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(20px)';
+          card.style.transition = 'opacity 0.5s ease ' + (i * 100) + 'ms, transform 0.5s ease ' + (i * 100) + 'ms';
+          setTimeout(function(){ card.style.opacity = '1'; card.style.transform = 'translateY(0)'; }, 50);
+        });
+      }
+    });
+  }, { threshold: 0.1 });
+
+  sections.forEach(function(s){ observer.observe(s); });
+})();
+</script>
+</body>
+</html>
