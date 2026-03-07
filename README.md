@@ -2,10 +2,17 @@
 
 Gathering in Faith, Growing in Grace, Serving with Love.
 
-## Live Site
+## Development
 
-🌐 https://gotoamg.github.io/dallas-brethren-assembly/
+```bash
+npm install
+npm run dev
+```
 
-## Last Updated
+## Build & Deploy
 
-2026-03-03T05:22:16.914Z
+```bash
+npm run build
+```
+
+Deploy the `dist` folder to Vercel, Netlify, or any static host.
