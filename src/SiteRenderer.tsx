@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import {
   Star, Quote, ArrowRight, Check, Menu, X, Loader2,
@@ -111,18 +111,29 @@ function getShadowClasses(s: string) {
 }
 
 const fontSizeMap: Record<string, string> = { xs: '0.75rem', sm: '0.875rem', base: '1rem', lg: '1.125rem', xl: '1.25rem', '2xl': '1.5rem' };
+const fontWeightMap: Record<string, number> = { normal: 400, medium: 500, semibold: 600, bold: 700 };
 
-function NestedSubmenu({ item, submenuStyle, onNavigate, depth, fontSize }: { item: any; submenuStyle: any; onNavigate: (href: string) => void; depth: number; fontSize?: string }) {
+function getSubTextTransform(linkStyle?: string): React.CSSProperties {
+  switch (linkStyle) {
+    case 'uppercase': return { textTransform: 'uppercase' as const };
+    case 'small-caps': return { fontVariant: 'small-caps' };
+    default: return {};
+  }
+}
+
+function NestedSubmenu({ item, submenuStyle, onNavigate, depth, submenuItemStyle, hoverColor }: { item: any; submenuStyle: any; onNavigate: (href: string) => void; depth: number; submenuItemStyle: React.CSSProperties; hoverColor?: string }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   return (
     <div className="relative" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
       <button
         className={cn('w-full px-4 py-2.5 text-left hover:bg-muted/80 flex items-center gap-3 transition-colors text-popover-foreground')}
+        style={submenuItemStyle}
         onClick={(e: any) => { e.preventDefault(); if (item.href) onNavigate(item.href); }}
       >
         {submenuStyle.showIcons && item.icon && <DynamicIcon name={item.icon} className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
         <div className="flex-1 min-w-0">
-          <div className="font-medium" style={{ fontSize: fontSize || undefined }}>{item.label}</div>
+          <div className="font-medium" style={{ fontSize: submenuItemStyle.fontSize }}>{item.label}</div>
           {submenuStyle.showDescriptions && item.description && <div className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{item.description}</div>}
         </div>
         <ChevronRight className="w-3 h-3 text-muted-foreground flex-shrink-0" />
@@ -132,13 +143,16 @@ function NestedSubmenu({ item, submenuStyle, onNavigate, depth, fontSize }: { it
           <div className={cn('min-w-44 py-2 border border-border', getBackgroundClasses(submenuStyle.background), getBorderRadiusClasses(submenuStyle.borderRadius), getShadowClasses(submenuStyle.shadow))}>
             {item.children.map((child: any, idx: number) => (
               child.children && child.children.length > 0 && depth < 3 ? (
-                <NestedSubmenu key={idx} item={child} submenuStyle={submenuStyle} onNavigate={onNavigate} depth={depth + 1} fontSize={fontSize} />
+                <NestedSubmenu key={idx} item={child} submenuStyle={submenuStyle} onNavigate={onNavigate} depth={depth + 1} submenuItemStyle={submenuItemStyle} hoverColor={hoverColor} />
               ) : (
                 <button key={idx} onClick={() => onNavigate(child.href)}
-                  className="w-full px-4 py-2.5 text-left hover:bg-muted/80 flex items-center gap-3 transition-colors text-popover-foreground">
+                  onMouseEnter={() => setHoveredIdx(idx)}
+                  onMouseLeave={() => setHoveredIdx(null)}
+                  className="w-full px-4 py-2.5 text-left hover:bg-muted/80 flex items-center gap-3 transition-colors text-popover-foreground"
+                  style={{ ...submenuItemStyle, color: hoveredIdx === idx && hoverColor ? hoverColor : submenuItemStyle.color }}>
                   {submenuStyle.showIcons && child.icon && <DynamicIcon name={child.icon} className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium" style={{ fontSize: fontSize || undefined }}>{child.label}</div>
+                    <div className="font-medium" style={{ fontSize: submenuItemStyle.fontSize }}>{child.label}</div>
                     {submenuStyle.showDescriptions && child.description && <div className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{child.description}</div>}
                   </div>
                 </button>
@@ -153,14 +167,38 @@ function NestedSubmenu({ item, submenuStyle, onNavigate, depth, fontSize }: { it
 
 function SimpleDropdown({ item, headerSettings, onNavigate, linkClasses, textColor = 'inherit' }: any) {
   const [isOpen, setIsOpen] = useState(false);
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const submenuStyle = headerSettings?.submenuStyle || defaultSubmenuStyle;
-  const resolvedFontSize = fontSizeMap[headerSettings?.fontSize || 'base'] || fontSizeMap['base'];
+
+  const rootFontSize = fontSizeMap[headerSettings?.fontSize || 'base'] || fontSizeMap['base'];
+  const rootFontFamily = headerSettings?.fontFamily;
+  const subFontFamily = headerSettings?.submenuFontFamily || rootFontFamily;
+  const subFontSize = fontSizeMap[headerSettings?.submenuFontSize || headerSettings?.fontSize || 'base'] || fontSizeMap['base'];
+  const subTextColor = headerSettings?.submenuTextColor;
+  const subHoverColor = headerSettings?.submenuHoverColor || headerSettings?.hoverColor;
+  const subWeight = fontWeightMap[headerSettings?.submenuLinkWeight || 'medium'] || 500;
+  const subTransform = getSubTextTransform(headerSettings?.submenuLinkStyle);
+
+  const submenuItemStyle: React.CSSProperties = {
+    fontFamily: subFontFamily || undefined,
+    fontSize: subFontSize,
+    fontWeight: subWeight,
+    color: subTextColor || undefined,
+    ...subTransform,
+  };
+
+  const rootTriggerStyle: React.CSSProperties = {
+    color: textColor,
+    fontFamily: rootFontFamily || undefined,
+    fontSize: rootFontSize,
+  };
+
   return (
     <div className="relative" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
-      <button className={cn('flex items-center gap-1.5 transition-colors', linkClasses)} style={{ color: textColor }}
+      <button className={cn('flex items-center gap-1.5 transition-colors', linkClasses)} style={rootTriggerStyle}
         onClick={(e: any) => { e.preventDefault(); if (item.href) onNavigate(item.href); }}>
         {submenuStyle.showIcons && item.icon && <DynamicIcon name={item.icon} className="w-4 h-4" />}
-        <span style={{ fontSize: resolvedFontSize }}>{item.label}</span>
+        <span>{item.label}</span>
         <ChevronDown className={cn('h-4 w-4 transition-transform duration-200', isOpen && 'rotate-180')} />
       </button>
       {item.children && item.children.length > 0 && (
@@ -174,13 +212,16 @@ function SimpleDropdown({ item, headerSettings, onNavigate, linkClasses, textCol
           >
             {item.children.map((child: any, idx: number) => (
               child.children && child.children.length > 0 ? (
-                <NestedSubmenu key={idx} item={child} submenuStyle={submenuStyle} onNavigate={onNavigate} depth={1} fontSize={resolvedFontSize} />
+                <NestedSubmenu key={idx} item={child} submenuStyle={submenuStyle} onNavigate={onNavigate} depth={1} submenuItemStyle={submenuItemStyle} hoverColor={subHoverColor} />
               ) : (
                 <button key={idx} onClick={() => { onNavigate(child.href); setIsOpen(false); }}
-                  className="w-full px-4 py-2.5 text-left hover:bg-muted/80 flex items-center gap-3 transition-colors text-popover-foreground">
+                  onMouseEnter={() => setHoveredIdx(idx)}
+                  onMouseLeave={() => setHoveredIdx(null)}
+                  className="w-full px-4 py-2.5 text-left hover:bg-muted/80 flex items-center gap-3 transition-colors text-popover-foreground"
+                  style={{ ...submenuItemStyle, color: hoveredIdx === idx && subHoverColor ? subHoverColor : submenuItemStyle.color }}>
                   {submenuStyle.showIcons && child.icon && <DynamicIcon name={child.icon} className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium" style={{ fontSize: resolvedFontSize }}>{child.label}</div>
+                    <div className="font-medium" style={{ fontSize: subFontSize }}>{child.label}</div>
                     {submenuStyle.showDescriptions && child.description && <div className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{child.description}</div>}
                   </div>
                 </button>
@@ -254,17 +295,38 @@ function MultiSlideHero({ heroData }: { heroData: any }) {
           const alignH = { left: 'items-start text-left', center: 'items-center text-center', right: 'items-end text-right' }[layout.contentAlign || 'center'];
           const alignV = { top: 'justify-start pt-24', middle: 'justify-center', bottom: 'justify-end pb-24' }[layout.verticalAlign || 'middle'];
 
+          const scopeClass = 'hero-slide-' + (slide.id || index);
+          const d = responsive.fontSizes?.desktop || {};
+          const t = responsive.fontSizes?.tablet || {};
+          const m = responsive.fontSizes?.mobile || {};
+          const heroFontBlock = [
+            '.' + scopeClass + ' .hero-title { font-size: ' + (d.title || '4rem') + '; }',
+            '.' + scopeClass + ' .hero-subtitle { font-size: ' + (d.subtitle || '1.5rem') + '; }',
+            '.' + scopeClass + ' .hero-description { font-size: ' + (d.description || '1.125rem') + '; }',
+            '@media (max-width: 1023px) {',
+            '  .' + scopeClass + ' .hero-title { font-size: ' + (t.title || '2.5rem') + '; }',
+            '  .' + scopeClass + ' .hero-subtitle { font-size: ' + (t.subtitle || '1.25rem') + '; }',
+            '  .' + scopeClass + ' .hero-description { font-size: ' + (t.description || '1rem') + '; }',
+            '}',
+            '@media (max-width: 767px) {',
+            '  .' + scopeClass + ' .hero-title { font-size: ' + (m.title || '2rem') + '; }',
+            '  .' + scopeClass + ' .hero-subtitle { font-size: ' + (m.subtitle || '1.125rem') + '; }',
+            '  .' + scopeClass + ' .hero-description { font-size: ' + (m.description || '0.875rem') + '; }',
+            '}',
+          ].join(' ');
+
           return (
-            <div key={slide.id || index} className={cn('absolute inset-0 will-change-transform transition-all', transitionClass, isActive ? 'z-10' : 'z-0')} style={{ transitionDuration: (slider.transitionSpeed || 600) + 'ms' }}>
+            <div key={slide.id || index} className={cn('absolute inset-0 will-change-transform transition-all', transitionClass, isActive ? 'z-10' : 'z-0', scopeClass)} style={{ transitionDuration: (slider.transitionSpeed || 600) + 'ms' }}>
+              <style dangerouslySetInnerHTML={{ __html: heroFontBlock }} />
               {slide.backgroundImage && (
                 <div className="absolute inset-0 bg-cover bg-no-repeat" style={{ backgroundImage: 'url(' + slide.backgroundImage + ')', backgroundPosition: slide.backgroundPosition ? slide.backgroundPosition.x + '% ' + slide.backgroundPosition.y + '%' : 'center center' }} />
               )}
               <div className="absolute inset-0" style={overlayStyle} />
               <div className={cn('relative z-10 flex flex-col h-full px-4 sm:px-6 lg:px-8', alignH, alignV)} style={{ maxWidth: layout.maxWidth ? layout.maxWidth + 'px' : undefined, margin: '0 auto' }}>
                 <div className={cn('max-w-4xl', isActive ? 'animate-fade-in' : 'opacity-0 translate-y-4')} style={{ animationDelay: (animation.textAnimationDelay || 200) + 'ms', animationFillMode: 'both' }}>
-                  {slide.title && <h1 className="font-bold text-white mb-4 leading-tight" style={{ fontSize: responsive.fontSizes?.desktop?.title || '4rem', textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>{slide.title}</h1>}
-                  {slide.subtitle && <p className="text-white/90 mb-6" style={{ fontSize: responsive.fontSizes?.desktop?.subtitle || '1.5rem', textShadow: '0 1px 2px rgba(0,0,0,0.2)' }}>{slide.subtitle}</p>}
-                  {slide.description && <p className="text-white/80 mb-8 max-w-2xl" style={{ fontSize: responsive.fontSizes?.desktop?.description || '1.125rem' }}>{slide.description}</p>}
+                  {slide.title && <h1 className="hero-title font-bold text-white mb-4 leading-tight" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>{slide.title}</h1>}
+                  {slide.subtitle && <p className="hero-subtitle text-white/90 mb-6" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.2)' }}>{slide.subtitle}</p>}
+                  {slide.description && <p className="hero-description text-white/80 mb-8 max-w-2xl">{slide.description}</p>}
                   {(slide.primaryButton || slide.secondaryButton) && (
                     <div className={cn('flex flex-wrap gap-4', layout.contentAlign === 'center' && 'justify-center', layout.contentAlign === 'right' && 'justify-end')}>
                       {slide.primaryButton && <a href={slide.primaryButton.link || '#'} className="inline-flex items-center justify-center h-11 rounded-md px-8 text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90">{slide.primaryButton.text}</a>}
@@ -349,7 +411,10 @@ export function SiteRenderer({ content, businessName }: { content: any; business
   const [isScrolled, setIsScrolled] = useState(false);
   const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('up');
   const [lastScrollY, setLastScrollY] = useState(0);
-  const [currentPage, setCurrentPage] = useState('');
+  const [currentPage, setCurrentPage] = useState(() => {
+    const path = window.location.pathname.slice(1);
+    return path || '';
+  });
 
   // Multi-page support
   useEffect(() => { if (pages?.length > 0 && !currentPage) { const h = pages.find((p: any) => p.isHome); setCurrentPage(h?.slug || pages[0]?.slug || ''); } }, [pages]);
@@ -393,12 +458,41 @@ export function SiteRenderer({ content, businessName }: { content: any; business
   const accentBgStyle = customColors ? { backgroundColor: (customColors.accent || customColors.primary) + '15' } : undefined;
 
   const handleNavClick = (e: any, href: string) => {
-    if (href.startsWith('/')) { e.preventDefault(); setCurrentPage(href.slice(1)); setMobileMenuOpen(false); window.scrollTo(0,0); return; }
+    if (href.startsWith('/')) { e.preventDefault(); const slug = href.slice(1); setCurrentPage(slug); window.history.pushState({}, '', href || '/'); setMobileMenuOpen(false); window.scrollTo(0,0); return; }
     if (href.startsWith('#')) { e.preventDefault(); document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); return; }
     setMobileMenuOpen(false);
   };
 
-  const onNavigate = (slug: string) => { setCurrentPage(slug); window.scrollTo(0, 0); setMobileMenuOpen(false); };
+  const onNavigate = (slug: string) => { setCurrentPage(slug); const newPath = slug && slug !== 'home' ? '/' + slug : '/'; window.history.pushState({}, '', newPath); window.scrollTo(0, 0); setMobileMenuOpen(false); };
+
+  useEffect(() => { const onPop = () => { const path = window.location.pathname.slice(1); setCurrentPage(path || ''); }; window.addEventListener('popstate', onPop); return () => window.removeEventListener('popstate', onPop); }, []);
+
+  // Dynamic per-page SEO: update document title + meta tags when page changes
+  useEffect(() => {
+    if (!activePage) return;
+    const seo = activePage.seo || {};
+    const siteName = businessName || 'My Website';
+    const pageTitle = seo.metaTitle || (activePage.isHome ? siteName : (activePage.title ? activePage.title + ' | ' + siteName : siteName));
+    document.title = pageTitle;
+    const setMeta = (attr: string, key: string, val: string) => { let el = document.querySelector('meta[' + attr + '="' + key + '"]') as HTMLMetaElement; if (!el) { el = document.createElement('meta'); el.setAttribute(attr, key); document.head.appendChild(el); } el.content = val; };
+    if (seo.metaDescription) { setMeta('name', 'description', seo.metaDescription); setMeta('property', 'og:description', seo.metaDescription); setMeta('name', 'twitter:description', seo.metaDescription); }
+    setMeta('property', 'og:title', pageTitle);
+    setMeta('name', 'twitter:title', pageTitle);
+    if (seo.ogImage) { setMeta('property', 'og:image', seo.ogImage); setMeta('name', 'twitter:image', seo.ogImage); }
+  }, [activePage, businessName]);
+
+  // Merged navigation (primary nav + mega menu enhancements) — shared by header & footer
+  const mergedNav = React.useMemo(() => {
+    const primaryItems = header?.navItems || [];
+    const megaItems = header?.megaMenuItems || [];
+    if (megaItems.length > 0 && primaryItems.length > 0) {
+      return primaryItems.map((nav: any) => {
+        const match = megaItems.find((m: any) => m.label?.toLowerCase().trim() === nav.label?.toLowerCase().trim());
+        return match ? { ...match, href: match.href || nav.href } : nav;
+      });
+    }
+    return primaryItems.length > 0 ? primaryItems : megaItems;
+  }, [header?.navItems, header?.megaMenuItems]);
 
   // Header helpers
   const getStickyClass = () => { if (!headerSettings.isSticky) return 'relative'; if (headerSettings.stickyStyle === 'scroll-up') return scrollDirection === 'up' ? 'sticky top-0' : 'relative -translate-y-full'; if (headerSettings.stickyStyle === 'after-hero') return isScrolled ? 'fixed top-0 w-full' : 'absolute top-0 w-full'; return 'sticky top-0'; };
@@ -431,13 +525,22 @@ export function SiteRenderer({ content, businessName }: { content: any; business
               'justify-between'
             )}>
             <div className={cn(
-              "flex-shrink-0",
+              "flex-shrink-0 cursor-pointer",
               headerSettings.layout === 'centered' && 'order-[3] mx-auto',
               headerSettings.showLogo === false && 'hidden',
               (headerSettings.logoPosition || 'left') === 'left' && 'order-2',
               headerSettings.logoPosition === 'center' && 'order-[3] mx-auto',
               headerSettings.logoPosition === 'right' && 'order-[5]',
-            )}>
+            )} onClick={() => {
+              const link = (header.logoLink || '').trim();
+              if (link && (link.startsWith('http://') || link.startsWith('https://'))) {
+                window.location.assign(link);
+              } else if (link) {
+                onNavigate && onNavigate(link.charAt(0) === '/' ? link.slice(1) : link);
+              } else {
+                onNavigate && onNavigate('home');
+              }
+            }}>
               {header.logo ? (
                 <div style={{ height: getHeaderLogoHeight() + 'px' }}>
                   <img src={header.logo} alt={businessName} style={{ height: '100%', width: 'auto', objectFit: 'contain', objectPosition: 'left center', transform: 'scale(1.18)', transformOrigin: 'left center', display: 'block' }} />
@@ -447,13 +550,15 @@ export function SiteRenderer({ content, businessName }: { content: any; business
               )}
             </div>
             <div className={cn(bpClasses.show, 'items-center gap-6 order-3', isCenteredLayout && 'flex-1 justify-center')}>
-              {header.megaMenuItems && header.megaMenuItems.length > 0 ? (
-              <nav className="flex items-center" style={{ gap: (headerSettings.itemSpacing ?? 24) + 'px' }}>
-                  {header.megaMenuItems.map((item: any) =>
-                    item.type === 'simple-dropdown' && item.children?.length > 0 ? (
-                      <SimpleDropdown key={item.id} item={item} headerSettings={headerSettings} onNavigate={(href: string) => { if (href.startsWith('/')) onNavigate(href.slice(1)); else if (href.startsWith('#')) document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' }); else window.location.href = href; }} linkClasses={getLinkClasses()} textColor={getHeaderTextColor()} />
+              {(() => {
+                const merged = mergedNav;
+                return merged.length > 0 ? (
+                <nav className="flex items-center" style={{ gap: (headerSettings.itemSpacing ?? 24) + 'px' }}>
+                  {merged.map((item: any, i: number) =>
+                    (item.type === 'simple-dropdown' && item.children?.length > 0) || item.children?.length > 0 ? (
+                      <SimpleDropdown key={item.id || i} item={item} headerSettings={headerSettings} onNavigate={(href: string) => { if (href.startsWith('/')) onNavigate(href.slice(1)); else if (href.startsWith('#')) document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' }); else window.location.href = href; }} linkClasses={getLinkClasses()} textColor={getHeaderTextColor()} />
                     ) : (
-                      <a key={item.id} href={item.href || '#'} onClick={(e: any) => handleNavClick(e, item.href || '#')}
+                      <a key={item.id || i} href={item.href || '#'} onClick={(e: any) => handleNavClick(e, item.href || '#')}
                         className={cn('rounded-md transition-colors', getLinkClasses())} style={navLinkStyle}>
                         {item.icon && <DynamicIcon name={item.icon} className="w-4 h-4 mr-1 inline" />}
                         {item.label}
@@ -461,20 +566,8 @@ export function SiteRenderer({ content, businessName }: { content: any; business
                     )
                   )}
                 </nav>
-              ) : header.navItems ? (
-                <nav className="flex items-center" style={{ gap: (headerSettings.itemSpacing ?? 24) + 'px' }}>
-                  {header.navItems.map((item: any, i: number) => (
-                    item.children?.length > 0 ? (
-                      <SimpleDropdown key={i} item={item} headerSettings={headerSettings} onNavigate={(href: string) => { if (href.startsWith('/')) onNavigate(href.slice(1)); else if (href.startsWith('#')) document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' }); else window.location.href = href; }} linkClasses={getLinkClasses()} textColor={getHeaderTextColor()} />
-                    ) : (
-                      <a key={i} href={item.href || '#'} onClick={(e: any) => handleNavClick(e, item.href || '#')}
-                        className={cn('rounded-md transition-colors', getLinkClasses())} style={navLinkStyle}>
-                        {item.label}
-                      </a>
-                    )
-                  ))}
-                </nav>
-              ) : null}
+                ) : null;
+              })()}
             </div>
             {header.ctaButton && headerSettings?.showCtaButton !== false && (header.ctaButton.href ? <a href={header.ctaButton.href} target={header.ctaButton.href.startsWith('http') ? '_blank' : undefined} rel={header.ctaButton.href.startsWith('http') ? 'noopener noreferrer' : undefined} className="order-4"><Button size="sm" style={primaryBtnStyle} className="font-semibold min-h-[40px]">{header.ctaButton.text}</Button></a> : <Button size="sm" style={primaryBtnStyle} className="font-semibold min-h-[40px] order-4">{header.ctaButton.text}</Button>)}
             <button className={cn('p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-md transition-colors', bpClasses.hide)} style={{ color: 'inherit' }} onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
@@ -497,59 +590,57 @@ export function SiteRenderer({ content, businessName }: { content: any; business
               <button onClick={() => setMobileMenuOpen(false)} className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center hover:opacity-70 transition-opacity" aria-label="Close menu"><X className="w-6 h-6" /></button>
             </div>
             <nav className="flex flex-col px-6 flex-1 overflow-y-auto">
-              {header?.megaMenuItems?.length > 0 ? (
+              {(() => {
+                const merged = mergedNav;
+                return merged.length > 0 ? (
                 <Accordion type="single" collapsible className="w-full">
-                  {header.megaMenuItems.map((item: any) =>
+                  {merged.map((item: any, i: number) =>
                     item.children?.length > 0 ? (
-                      <AccordionItem key={item.id} value={item.id} className="border-b border-white/10">
+                      <AccordionItem key={item.id || i} value={item.id || 'nav-' + i} className="border-b border-white/10">
                         <AccordionTrigger className="py-4 text-base sm:text-lg font-medium hover:no-underline opacity-90 hover:opacity-100">
                           <span className="flex items-center gap-2">{item.icon && <DynamicIcon name={item.icon} className="w-5 h-5" />}{item.label}</span>
                         </AccordionTrigger>
                         <AccordionContent className="pb-4">
                           <div className="space-y-1 pl-4">
-                            {item.children.map((child: any, ci: number) => (
-                              <a key={ci} href={child.href} onClick={(e: any) => handleNavClick(e, child.href)} className="block py-2.5 text-sm opacity-80 hover:opacity-100 transition-opacity">
-                                {child.icon && <DynamicIcon name={child.icon} className="w-4 h-4 mr-2 inline" />}{child.label}
-                              </a>
-                            ))}
+                            {item.children.map((child: any, ci: number) =>
+                              child.children?.length > 0 ? (
+                                <Accordion key={ci} type="single" collapsible className="w-full">
+                                  <AccordionItem value={'sub-' + (item.id || i) + '-' + ci} className="border-b border-white/5">
+                                    <AccordionTrigger className="py-2.5 text-sm font-medium hover:no-underline opacity-80 hover:opacity-100">
+                                      <span className="flex items-center gap-2">{child.icon && <DynamicIcon name={child.icon} className="w-4 h-4" />}{child.label}</span>
+                                    </AccordionTrigger>
+                                    <AccordionContent className="pb-2">
+                                      <div className="space-y-1 pl-4">
+                                        {child.children.map((grandchild: any, gci: number) => (
+                                          <a key={gci} href={grandchild.href} onClick={(e: any) => handleNavClick(e, grandchild.href)} className="block py-2 text-sm opacity-70 hover:opacity-100 transition-opacity">
+                                            {grandchild.icon && <DynamicIcon name={grandchild.icon} className="w-3.5 h-3.5 mr-2 inline" />}{grandchild.label}
+                                          </a>
+                                        ))}
+                                      </div>
+                                    </AccordionContent>
+                                  </AccordionItem>
+                                </Accordion>
+                              ) : (
+                                <a key={ci} href={child.href} onClick={(e: any) => handleNavClick(e, child.href)} className="block py-2.5 text-sm opacity-80 hover:opacity-100 transition-opacity">
+                                  {child.icon && <DynamicIcon name={child.icon} className="w-4 h-4 mr-2 inline" />}{child.label}
+                                </a>
+                              )
+                            )}
                           </div>
                         </AccordionContent>
                       </AccordionItem>
                     ) : (
-                      <a key={item.id} href={item.href || '#'} onClick={(e: any) => handleNavClick(e, item.href || '#')}
+                      <a key={item.id || i} href={item.href || '#'} onClick={(e: any) => handleNavClick(e, item.href || '#')}
                         className="py-4 text-base sm:text-lg font-medium border-b border-white/10 flex items-center transition-opacity opacity-90 hover:opacity-100">
                         {item.icon && <DynamicIcon name={item.icon} className="w-5 h-5 mr-2" />}{item.label}
                       </a>
                     )
                   )}
                 </Accordion>
-              ) : header?.navItems ? (
-                <Accordion type="single" collapsible className="w-full">
-                  {header.navItems.map((item: any, i: number) =>
-                    item.children?.length > 0 ? (
-                      <AccordionItem key={i} value={'nav-' + i} className="border-b border-white/10">
-                        <AccordionTrigger className="py-4 text-base sm:text-lg font-medium hover:no-underline opacity-90 hover:opacity-100">
-                          <span className="flex items-center gap-2">{item.label}</span>
-                        </AccordionTrigger>
-                        <AccordionContent className="pb-4">
-                          <div className="space-y-1 pl-4">
-                            {item.children.map((child: any, ci: number) => (
-                              <a key={ci} href={child.href} onClick={(e: any) => handleNavClick(e, child.href)} className="block py-2.5 text-sm opacity-80 hover:opacity-100 transition-opacity">
-                                {child.label}
-                              </a>
-                            ))}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    ) : (
-                      <a key={i} href={item.href || '#'} onClick={(e: any) => handleNavClick(e, item.href || '#')}
-                        className="py-4 text-base sm:text-lg font-medium border-b border-white/10 flex items-center transition-opacity opacity-90 hover:opacity-100">{item.label}</a>
-                    )
-                  )}
-                </Accordion>
-              ) : null}
+                ) : null;
+              })()}
             </nav>
-            {header?.ctaButton && (
+            {header?.ctaButton && headerSettings?.showCtaButton !== false && (
               <div className="p-6 border-t border-white/10">{header.ctaButton.href ? <a href={header.ctaButton.href} target={header.ctaButton.href.startsWith('http') ? '_blank' : undefined} rel={header.ctaButton.href.startsWith('http') ? 'noopener noreferrer' : undefined}><Button size="lg" style={primaryBtnStyle} className="font-semibold w-full min-h-[52px]">{header.ctaButton.text}</Button></a> : <Button size="lg" style={primaryBtnStyle} className="font-semibold w-full min-h-[52px]">{header.ctaButton.text}</Button>}</div>
             )}
           </div>
@@ -574,6 +665,8 @@ export function SiteRenderer({ content, businessName }: { content: any; business
         const isImageBg = section.settings?.background?.type === 'image';
         const textClass = isImageBg ? 'text-white' : '';
         const sectionId = section.settings?.anchorId || section.anchorId || slugify(section.title) || (section.type + '-' + index);
+
+
 
         switch (section.type) {
           case 'about': {
@@ -902,7 +995,7 @@ export function SiteRenderer({ content, businessName }: { content: any; business
                   )}
                   {(section.title || section.body) && (
                     <ScrollReveal animation="fade-up" delay={200}>
-                      <div className="text-center">
+                      <div className={(() => { const a = section.settings?.textAlign || 'left'; return a === 'center' ? 'text-center' : a === 'right' ? 'text-right' : 'text-left'; })()}>
                         {section.title && !section.settings?.hideTitle && <h2 className={'text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 ' + textClass}>{section.title}</h2>}
                         {section.body && <div className={'text-base sm:text-lg leading-relaxed ' + (isImageBg ? 'text-white/90' : 'text-muted-foreground') + ' prose prose-lg max-w-none'} dangerouslySetInnerHTML={{ __html: section.body }} />}
                       </div>
@@ -989,14 +1082,38 @@ export function SiteRenderer({ content, businessName }: { content: any; business
             return (
               <section key={index} id={sectionId} className="py-12 sm:py-16 px-4 sm:px-6 bg-background" style={bgStyle}>
                 <div className="container mx-auto max-w-4xl">
-                  {section.title && !section.settings?.hideTitle && <ScrollReveal animation="blur-in"><h2 className={'text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-4 sm:mb-6 ' + textClass}>{section.title}</h2></ScrollReveal>}
-                  {section.body && <ScrollReveal animation="fade-up" delay={100}><div className={'text-base sm:text-lg leading-relaxed text-center max-w-2xl mx-auto ' + (isImageBg ? 'text-white/90' : 'text-muted-foreground') + ' prose prose-lg max-w-none'} dangerouslySetInnerHTML={{ __html: section.body }} /></ScrollReveal>}
+                  {section.title && !section.settings?.hideTitle && <ScrollReveal animation="blur-in"><h2 className={'text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 ' + (section.settings?.textAlign === 'center' ? 'text-center ' : section.settings?.textAlign === 'right' ? 'text-right ' : 'text-left ') + textClass}>{section.title}</h2></ScrollReveal>}
+                  {section.body && <ScrollReveal animation="fade-up" delay={100}><div className={'text-base sm:text-lg leading-relaxed ' + (section.settings?.textAlign === 'center' ? 'text-center ' : section.settings?.textAlign === 'right' ? 'text-right ' : 'text-left ') + (isImageBg ? 'text-white/90' : 'text-muted-foreground') + ' prose prose-lg max-w-none'} dangerouslySetInnerHTML={{ __html: section.body }} /></ScrollReveal>}
                   {section.image && <ScrollReveal animation="fade-up" delay={200}><div className="mt-8"><img src={section.image} alt={section.title || ''} className="rounded-xl shadow-lg w-full h-auto object-cover" /></div></ScrollReveal>}
                 </div>
               </section>
             );
           }
         }
+        return null;
+      }).map((el: any, index: number) => {
+        if (!el) return null;
+        const section = activeSections[index];
+        const ro = section?.settings?.responsiveOverrides;
+        if (!ro) return el;
+        const scope = 'section-font-' + index;
+        const rules: string[] = [];
+        if (ro.desktop?.headingFontSize) rules.push('.' + scope + ' h1, .' + scope + ' h2, .' + scope + ' h3 { font-size: ' + ro.desktop.headingFontSize + ' !important; }');
+        if (ro.desktop?.bodyFontSize) rules.push('.' + scope + ' p, .' + scope + ' li, .' + scope + ' span { font-size: ' + ro.desktop.bodyFontSize + ' !important; }');
+        if (ro.tablet?.headingFontSize || ro.tablet?.bodyFontSize) {
+          rules.push('@media (max-width: 1023px) {');
+          if (ro.tablet?.headingFontSize) rules.push('  .' + scope + ' h1, .' + scope + ' h2, .' + scope + ' h3 { font-size: ' + ro.tablet.headingFontSize + ' !important; }');
+          if (ro.tablet?.bodyFontSize) rules.push('  .' + scope + ' p, .' + scope + ' li, .' + scope + ' span { font-size: ' + ro.tablet.bodyFontSize + ' !important; }');
+          rules.push('}');
+        }
+        if (ro.mobile?.headingFontSize || ro.mobile?.bodyFontSize) {
+          rules.push('@media (max-width: 767px) {');
+          if (ro.mobile?.headingFontSize) rules.push('  .' + scope + ' h1, .' + scope + ' h2, .' + scope + ' h3 { font-size: ' + ro.mobile.headingFontSize + ' !important; }');
+          if (ro.mobile?.bodyFontSize) rules.push('  .' + scope + ' p, .' + scope + ' li, .' + scope + ' span { font-size: ' + ro.mobile.bodyFontSize + ' !important; }');
+          rules.push('}');
+        }
+        if (rules.length === 0) return el;
+        return <div key={'font-wrap-' + index} className={scope}><style dangerouslySetInnerHTML={{ __html: rules.join(' ') }} />{el}</div>;
       })}
 
       {/* Footer */}
@@ -1018,17 +1135,43 @@ export function SiteRenderer({ content, businessName }: { content: any; business
                   </div>
                 )}
               </div>
-              {footer?.linkGroups?.length > 0 ? footer.linkGroups.map((group: any, gi: number) => (
-                <div key={gi} className="lg:col-span-2">
-                  <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{group.title}</h4>
-                  <ul className="space-y-3">{group.links.map((link: any, i: number) => <li key={i}><a href={link.href} className="text-gray-400 hover:text-white transition-colors text-sm inline-flex items-center gap-1 group"><ArrowRight className="w-3 h-3 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-200" />{link.label}</a></li>)}</ul>
-                </div>
-              )) : footer?.links?.length > 0 ? (
-                <div className="lg:col-span-2">
-                  <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Quick Links</h4>
-                  <ul className="space-y-3">{footer.links.map((link: any, i: number) => <li key={i}><a href={link.href} className="text-gray-400 hover:text-white transition-colors text-sm inline-flex items-center gap-1 group"><ArrowRight className="w-3 h-3 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-200" />{link.label}</a></li>)}</ul>
-                </div>
-              ) : null}
+              {(() => {
+                const menuSource = footer?.footerMenuSource;
+                let effectiveLinkGroups = footer?.linkGroups;
+
+                if (menuSource === 'primary' && mergedNav.length > 0) {
+                  const quickLinks: any[] = [];
+                  const groups: any[] = [];
+                  mergedNav.forEach((item: any) => {
+                    if (item.children && item.children.length > 0) {
+                      groups.push({ title: item.label, links: item.children.map((c: any) => ({ label: c.label, href: c.href })) });
+                    } else {
+                      quickLinks.push({ label: item.label, href: item.href });
+                    }
+                  });
+                  if (quickLinks.length > 0) groups.unshift({ title: 'Quick Links', links: quickLinks });
+                  effectiveLinkGroups = groups;
+                } else if (menuSource === 'mega' && footer?.footerMegaMenuId && header?.megaMenuItems?.length) {
+                  const megaItem = (header.megaMenuItems as any[]).find((m: any) => m.id === footer.footerMegaMenuId);
+                  if (megaItem?.type === 'mega-dropdown' && megaItem.columns?.length) {
+                    effectiveLinkGroups = megaItem.columns.map((col: any) => ({ title: col.title || 'Links', links: (col.items || []).map((it: any) => ({ label: it.label, href: it.href })) }));
+                  } else if (megaItem?.type === 'simple-dropdown' && megaItem.children?.length) {
+                    effectiveLinkGroups = [{ title: megaItem.label, links: megaItem.children.map((c: any) => ({ label: c.label, href: c.href })) }];
+                  }
+                }
+
+                return effectiveLinkGroups?.length > 0 ? effectiveLinkGroups.map((group: any, gi: number) => (
+                  <div key={gi} className="lg:col-span-2">
+                    <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{group.title}</h4>
+                    <ul className="space-y-3">{(group.links || []).map((link: any, i: number) => <li key={i}><a href={link.href} onClick={(e: any) => handleNavClick(e, link.href)} className="text-gray-400 hover:text-white transition-colors text-sm inline-flex items-center gap-1 group"><ArrowRight className="w-3 h-3 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-200" />{link.label}</a></li>)}</ul>
+                  </div>
+                )) : footer?.links?.length > 0 ? (
+                  <div className="lg:col-span-2">
+                    <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Quick Links</h4>
+                    <ul className="space-y-3">{footer.links.map((link: any, i: number) => <li key={i}><a href={link.href} onClick={(e: any) => handleNavClick(e, link.href)} className="text-gray-400 hover:text-white transition-colors text-sm inline-flex items-center gap-1 group"><ArrowRight className="w-3 h-3 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-200" />{link.label}</a></li>)}</ul>
+                  </div>
+                ) : null;
+              })()}
               <div className="lg:col-span-4">
                 <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Get In Touch</h4>
                 <div className="space-y-4">
