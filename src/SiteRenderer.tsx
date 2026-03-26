@@ -1,11 +1,49 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import {
-  Star, Quote, ArrowRight, Check, Menu, X, Loader2,
+  Star, Quote, ArrowRight, Check, Menu, X, Loader2, Users,
   Facebook, Instagram, Twitter, Linkedin, Youtube, Github, Globe, ExternalLink,
   Mail, Phone, MapPin, ChevronDown, ChevronRight, ZoomIn, icons, type LucideIcon
 } from 'lucide-react';
 import { cn } from './lib/utils';
+
+// ===== Constants for visitor counter & newsletter redirect =====
+const SUPABASE_URL = "https://foemfjmfrulilubshnwn.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvZW1mam1mcnVsaWx1YnNobnduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUzMTgwMDgsImV4cCI6MjA4MDg5NDAwOH0.amehmaYIeVMh38QtQmvrLLaoravnPzzn4GUBPvPM_Pg";
+const EXPORTED_SITE_ID = "1772163432266";
+const PLATFORM_SITE_SLUG = "dallas-brethren-assembly";
+
+// ===== Inline FooterVisitorCounter =====
+function FooterVisitorCounter({ textColor }: { textColor?: string }) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    const siteId = EXPORTED_SITE_ID;
+    if (!siteId) return;
+    const sessionKey = 'ez_visitor_counted_' + siteId;
+    const headers: Record<string,string> = { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' };
+
+    if (!sessionStorage.getItem(sessionKey)) {
+      fetch(SUPABASE_URL + '/rest/v1/rpc/increment_visitor_count', {
+        method: 'POST', headers, body: JSON.stringify({ p_site_id: siteId })
+      }).then(r => r.json()).then(d => { if (typeof d === 'number') { sessionStorage.setItem(sessionKey, '1'); setCount(d); } }).catch(() => {});
+    } else {
+      fetch(SUPABASE_URL + '/rest/v1/site_visitor_counts?site_id=eq.' + siteId + '&select=count', { headers })
+        .then(r => r.json()).then(d => { if (d?.[0]?.count) setCount(d[0].count); }).catch(() => {});
+    }
+  }, []);
+  if (count === 0) return null;
+  return (
+    <span className="inline-flex items-center gap-1.5 text-[13px]" style={{ color: textColor || '#9ca3af' }}>
+      <Users className="w-3.5 h-3.5" />
+      {count.toLocaleString()} visitors
+    </span>
+  );
+}
+
+const PLATFORM_ROUTES = ['newsletter', 'blog'];
+function isPlatformRoute(slug: string) { return PLATFORM_ROUTES.some(r => slug === r || slug.startsWith(r + '/')); }
+
+
 
 // ===== Inline Accordion (matches shadcn/ui) =====
 const Accordion = AccordionPrimitive.Root;
@@ -458,12 +496,20 @@ export function SiteRenderer({ content, businessName }: { content: any; business
   const accentBgStyle = customColors ? { backgroundColor: (customColors.accent || customColors.primary) + '15' } : undefined;
 
   const handleNavClick = (e: any, href: string) => {
-    if (href.startsWith('/')) { e.preventDefault(); const slug = href.slice(1); setCurrentPage(slug); window.history.pushState({}, '', href || '/'); setMobileMenuOpen(false); window.scrollTo(0,0); return; }
+    if (href.startsWith('/')) {
+      e.preventDefault();
+      const slug = href.slice(1);
+      if (isPlatformRoute(slug)) { window.location.href = 'https://' + PLATFORM_SITE_SLUG + '.ezsiteai.com/' + slug; return; }
+      setCurrentPage(slug); window.history.pushState({}, '', href || '/'); setMobileMenuOpen(false); window.scrollTo(0,0); return;
+    }
     if (href.startsWith('#')) { e.preventDefault(); document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); return; }
     setMobileMenuOpen(false);
   };
 
-  const onNavigate = (slug: string) => { setCurrentPage(slug); const newPath = slug && slug !== 'home' ? '/' + slug : '/'; window.history.pushState({}, '', newPath); window.scrollTo(0, 0); setMobileMenuOpen(false); };
+  const onNavigate = (slug: string) => {
+    if (isPlatformRoute(slug)) { window.location.href = 'https://' + PLATFORM_SITE_SLUG + '.ezsiteai.com/' + slug; return; }
+    setCurrentPage(slug); const newPath = slug && slug !== 'home' ? '/' + slug : '/'; window.history.pushState({}, '', newPath); window.scrollTo(0, 0); setMobileMenuOpen(false);
+  };
 
   useEffect(() => { const onPop = () => { const path = window.location.pathname.slice(1); setCurrentPage(path || ''); }; window.addEventListener('popstate', onPop); return () => window.removeEventListener('popstate', onPop); }, []);
 
@@ -684,6 +730,7 @@ export function SiteRenderer({ content, businessName }: { content: any; business
                     <ScrollReveal animation="fade-up" delay={200}>
                       {!section.settings?.hideTitle && <h2 className={'text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold mb-6 sm:mb-8 ' + textClass}>{section.title}</h2>}
                       <div className={'text-base sm:text-lg lg:text-xl leading-relaxed whitespace-pre-line ' + (isImageBg ? 'text-white/90' : 'text-muted-foreground')} dangerouslySetInnerHTML={{ __html: section.body || '' }} />
+                      {(section.buttonText || section.ctaText) && (() => { const btnLink = section.buttonLink || section.ctaLink || '#'; const isExt = btnLink.startsWith('http'); return (<a href={btnLink} target={isExt ? '_blank' : undefined} rel={isExt ? 'noopener noreferrer' : undefined}><Button size="lg" style={primaryBtnStyle} className="mt-6">{section.buttonText || section.ctaText}</Button></a>); })()}
                     </ScrollReveal>
                   </div>
                 </section>
@@ -699,6 +746,7 @@ export function SiteRenderer({ content, businessName }: { content: any; business
                         <div>
                           {!section.settings?.hideTitle && <h2 className={'text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 sm:mb-8 ' + textClass}>{section.title}</h2>}
                           <div className={'text-base sm:text-lg lg:text-xl leading-relaxed whitespace-pre-line ' + (isImageBg ? 'text-white/90' : 'text-muted-foreground')} dangerouslySetInnerHTML={{ __html: section.body || '' }} />
+                          {(section.buttonText || section.ctaText) && (() => { const btnLink = section.buttonLink || section.ctaLink || '#'; const isExt = btnLink.startsWith('http'); return (<a href={btnLink} target={isExt ? '_blank' : undefined} rel={isExt ? 'noopener noreferrer' : undefined}><Button size="lg" style={primaryBtnStyle} className="mt-6">{section.buttonText || section.ctaText}</Button></a>); })()}
                         </div>
                       </ScrollReveal>
                       {section.image && <ScrollReveal animation="blur-in" delay={200}><img src={section.image} alt={section.title} className="rounded-2xl shadow-xl w-full h-auto object-cover aspect-[4/3]" /></ScrollReveal>}
@@ -739,6 +787,7 @@ export function SiteRenderer({ content, businessName }: { content: any; business
                       <div className={section.image ? 'text-center lg:text-left' : 'max-w-4xl mx-auto text-center'}>
                         {!section.settings?.hideTitle && <h2 className={'text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold mb-6 sm:mb-8 ' + textClass}>{section.title}</h2>}
                         <div className={'text-base sm:text-lg lg:text-xl leading-relaxed whitespace-pre-line ' + (isImageBg ? 'text-white/90' : 'text-muted-foreground')} dangerouslySetInnerHTML={{ __html: section.body || '' }} />
+                        {(section.buttonText || section.ctaText) && (() => { const btnLink = section.buttonLink || section.ctaLink || '#'; const isExt = btnLink.startsWith('http'); return (<a href={btnLink} target={isExt ? '_blank' : undefined} rel={isExt ? 'noopener noreferrer' : undefined}><Button size="lg" style={primaryBtnStyle} className="mt-6">{section.buttonText || section.ctaText}</Button></a>); })()}
                       </div>
                     </ScrollReveal>
                     {section.image && isRight && (
@@ -882,9 +931,13 @@ export function SiteRenderer({ content, businessName }: { content: any; business
                   <div className="container mx-auto max-w-4xl text-center relative z-10">
                     {!section.settings?.hideTitle && <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-white">{section.title}</h2>}
                     {section.body && <div className="text-lg sm:text-xl lg:text-2xl text-white/90 mb-8 sm:mb-10 max-w-2xl mx-auto" dangerouslySetInnerHTML={{ __html: section.body }} />}
-                    <Button size="lg" className="bg-white text-gray-900 hover:bg-gray-100 gap-2 w-full sm:w-auto min-h-[56px] px-10 text-lg font-bold rounded-xl shadow-2xl">
-                      {section.buttonText || 'Get Started'} <ArrowRight className="h-5 w-5" />
-                    </Button>
+                    {(() => { const btnLink = section.buttonLink || section.ctaLink || '#'; const isExt = btnLink.startsWith('http'); return (
+                      <a href={btnLink} target={isExt ? '_blank' : undefined} rel={isExt ? 'noopener noreferrer' : undefined}>
+                        <Button size="lg" className="bg-white text-gray-900 hover:bg-gray-100 gap-2 w-full sm:w-auto min-h-[56px] px-10 text-lg font-bold rounded-xl shadow-2xl">
+                          {section.buttonText || section.ctaText || 'Get Started'} <ArrowRight className="h-5 w-5" />
+                        </Button>
+                      </a>
+                    ); })()}
                   </div>
                 </ScrollReveal>
               </section>
@@ -998,6 +1051,7 @@ export function SiteRenderer({ content, businessName }: { content: any; business
                       <div className={(() => { const a = section.settings?.textAlign || 'left'; return a === 'center' ? 'text-center' : a === 'right' ? 'text-right' : 'text-left'; })()}>
                         {section.title && !section.settings?.hideTitle && <h2 className={'text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 ' + textClass}>{section.title}</h2>}
                         {section.body && <div className={'text-base sm:text-lg leading-relaxed ' + (isImageBg ? 'text-white/90' : 'text-muted-foreground') + ' prose prose-lg max-w-none'} dangerouslySetInnerHTML={{ __html: section.body }} />}
+                        {(section.buttonText || section.ctaText) && (() => { const btnLink = section.buttonLink || section.ctaLink || '#'; const isExt = btnLink.startsWith('http'); return (<a href={btnLink} target={isExt ? '_blank' : undefined} rel={isExt ? 'noopener noreferrer' : undefined}><Button size="lg" style={primaryBtnStyle} className="mt-6">{section.buttonText || section.ctaText}</Button></a>); })()}
                       </div>
                     </ScrollReveal>
                   )}
@@ -1084,6 +1138,7 @@ export function SiteRenderer({ content, businessName }: { content: any; business
                 <div className="container mx-auto max-w-4xl">
                   {section.title && !section.settings?.hideTitle && <ScrollReveal animation="blur-in"><h2 className={'text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 ' + (section.settings?.textAlign === 'center' ? 'text-center ' : section.settings?.textAlign === 'right' ? 'text-right ' : 'text-left ') + textClass}>{section.title}</h2></ScrollReveal>}
                   {section.body && <ScrollReveal animation="fade-up" delay={100}><div className={'text-base sm:text-lg leading-relaxed ' + (section.settings?.textAlign === 'center' ? 'text-center ' : section.settings?.textAlign === 'right' ? 'text-right ' : 'text-left ') + (isImageBg ? 'text-white/90' : 'text-muted-foreground') + ' prose prose-lg max-w-none'} dangerouslySetInnerHTML={{ __html: section.body }} /></ScrollReveal>}
+                  {(section.buttonText || section.ctaText) && <ScrollReveal animation="fade-up" delay={150}>{(() => { const btnLink = section.buttonLink || section.ctaLink || '#'; const isExt = btnLink.startsWith('http'); return (<a href={btnLink} target={isExt ? '_blank' : undefined} rel={isExt ? 'noopener noreferrer' : undefined}><Button size="lg" style={primaryBtnStyle} className="mt-6">{section.buttonText || section.ctaText}</Button></a>); })()}</ScrollReveal>}
                   {section.image && <ScrollReveal animation="fade-up" delay={200}><div className="mt-8"><img src={section.image} alt={section.title || ''} className="rounded-xl shadow-lg w-full h-auto object-cover" /></div></ScrollReveal>}
                 </div>
               </section>
@@ -1216,6 +1271,7 @@ export function SiteRenderer({ content, businessName }: { content: any; business
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-sm text-gray-500 text-center sm:text-left">{footer?.copyright || ('© ' + new Date().getFullYear() + ' ' + businessName + '. All rights reserved.')}</p>
               <div className="flex items-center gap-6 text-xs text-gray-500">
+                <FooterVisitorCounter textColor="#9ca3af" />
                 <a href="/privacy" className="hover:text-gray-400 transition-colors">Privacy Policy</a>
                 <a href="/terms" className="hover:text-gray-400 transition-colors">Terms of Service</a>
               </div>
