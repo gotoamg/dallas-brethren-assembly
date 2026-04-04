@@ -544,7 +544,7 @@
     "contactInfo": {
       "city": "Irving, TX 75061, USA",
       "email": "K C Mathai 972 253 4621 | Paul George 214-675-3262",
-      "phone": "972-854-2246 |",
+      "phone": "",
       "address": "2011 Parkside Ave Irving"
     },
     "description": "Gathering in Faith, Growing in Grace, Serving with Love.",
@@ -562,7 +562,9 @@
       "weekend": "",
       "weekdays": ""
     },
-    "footerMenuSource": "custom"
+    "showLinkGroups": true,
+    "footerMenuSource": "custom",
+    "contactSectionTitle": "Get In Touch"
   },
   "header": {
     "logo": "https://foemfjmfrulilubshnwn.supabase.co/storage/v1/object/public/site-images/8d899164-196e-4bcc-8b6f-7a5b62b61fc8/dba_logo31.png",
