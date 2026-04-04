@@ -697,7 +697,7 @@ export function SiteRenderer({ content, businessName }: { content: any; business
       {showHero && hero && <MultiSlideHero heroData={hero} />}
 
       {/* Page Title for non-home pages */}
-      {!showHero && activePage && (
+      {!showHero && activePage && !activePage.hideTitle && (
         <section className="py-10 sm:py-12 px-4 sm:px-6 bg-muted/30" style={accentBgStyle}>
           <div className="container mx-auto max-w-4xl text-center">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">{activePage.title}</h1>
@@ -929,6 +929,7 @@ export function SiteRenderer({ content, businessName }: { content: any; business
                 style={bgStyle || { background: 'linear-gradient(135deg, ' + (customColors?.primary || '#8B5CF6') + ', ' + (customColors?.secondary || customColors?.primary || '#7C3AED') + ')' }}>
                 <ScrollReveal animation="scale">
                   <div className="container mx-auto max-w-4xl text-center relative z-10">
+                    {section.image && <div className="mb-8 flex justify-center"><img src={section.image} alt={section.title || ''} className="rounded-xl max-h-[400px] w-full object-cover" loading="lazy" /></div>}
                     {!section.settings?.hideTitle && <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-white">{section.title}</h2>}
                     {section.body && <div className="text-lg sm:text-xl lg:text-2xl text-white/90 mb-8 sm:mb-10 max-w-2xl mx-auto" dangerouslySetInnerHTML={{ __html: section.body }} />}
                     {(() => { const btnLink = section.buttonLink || section.ctaLink || '#'; const isExt = btnLink.startsWith('http'); return (
@@ -1228,7 +1229,7 @@ export function SiteRenderer({ content, businessName }: { content: any; business
                 ) : null;
               })()}
               <div className="lg:col-span-4">
-                <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">Get In Touch</h4>
+                <h4 className="font-semibold text-white mb-4 text-sm uppercase tracking-wider">{footer?.contactSectionTitle || 'Get In Touch'}</h4>
                 <div className="space-y-4">
                   <a href={'mailto:' + (footer?.contactInfo?.email || 'contact@example.com')} className="flex items-start gap-3 text-gray-400 hover:text-white transition-colors group">
                     <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors" style={{ backgroundColor: customColors?.primary ? customColors.primary + '20' : 'rgba(255,255,255,0.1)' }}><Mail className="w-4 h-4" /></div>
