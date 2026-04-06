@@ -719,12 +719,12 @@ export function SiteRenderer({ content, businessName }: { content: any; business
         // AI-custom sections: render saved customHtml directly via iframe (matches platform preview)
         if (section.settings?.layoutVariant === 'ai-custom' && section.settings?.customHtml) {
           const iframeId = 'ai-section-' + section.type + '-' + index;
-          const resizeScript = '<script>function _postH(){window.parent.postMessage({type:\'iframe-resize\',height:document.body.scrollHeight,id:\'' + iframeId + '\'},\'*\')}window.addEventListener(\'load\',_postH);new ResizeObserver(_postH).observe(document.body)<\/script>';
+          const resizeScript = '<script>function _getH(){var b=document.body,d=document.documentElement,h=Math.max(b.scrollHeight||0,b.offsetHeight||0,d.scrollHeight||0,d.offsetHeight||0);var els=document.body.querySelectorAll("*");for(var i=0;i<els.length;i++){var r=els[i].getBoundingClientRect();var bot=r.bottom;if(bot>h)h=Math.ceil(bot)}return Math.ceil(h)}function _postH(){window.parent.postMessage({type:"iframe-resize",height:_getH(),id:"' + iframeId + '"},"*")}window.addEventListener("load",function(){_postH();setTimeout(_postH,500);setTimeout(_postH,1500)});new ResizeObserver(_postH).observe(document.body);document.addEventListener("DOMContentLoaded",_postH)<\/script>';
           return (
             <section key={index} id={sectionId}>
               <iframe id={iframeId}
-                srcDoc={'<!DOCTYPE html><html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><script src="https://cdn.tailwindcss.com"><\/script><style>body{margin:0;font-family:system-ui,-apple-system,sans-serif;overflow:hidden}*{box-sizing:border-box}</style></head><body>' + section.settings.customHtml + resizeScript + '</body></html>'}
-                className="w-full border-0" style={{ overflow: 'hidden' }}
+                srcDoc={'<!DOCTYPE html><html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><script src="https://cdn.tailwindcss.com"><\/script><style>body{margin:0;font-family:system-ui,-apple-system,sans-serif;overflow-x:hidden}*{box-sizing:border-box}img{max-width:100%;height:auto}</style></head><body>' + section.settings.customHtml + resizeScript + '</body></html>'}
+                className="w-full border-0" style={{ overflow: 'hidden', minHeight: '200px' }}
                 sandbox="allow-scripts allow-same-origin allow-popups" title={section.type + ' section'} scrolling="no" />
             </section>
           );
