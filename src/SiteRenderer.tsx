@@ -3,7 +3,7 @@ import * as AccordionPrimitive from '@radix-ui/react-accordion';
 import {
   Star, Quote, ArrowRight, Check, Menu, X, Loader2, Users,
   Facebook, Instagram, Twitter, Linkedin, Youtube, Github, Globe, ExternalLink,
-  Mail, Phone, MapPin, ChevronDown, ChevronRight, ZoomIn, icons, type LucideIcon
+  Mail, Phone, MapPin, ChevronDown, ChevronLeft, ChevronRight, ZoomIn, icons, type LucideIcon
 } from 'lucide-react';
 import { cn } from './lib/utils';
 
@@ -379,8 +379,8 @@ function MultiSlideHero({ heroData }: { heroData: any }) {
       </div>
       {navigation.showArrows && !isSingle && (
         <>
-          <button onClick={prev} className="absolute top-1/2 -translate-y-1/2 left-0 mx-4 z-20 bg-black/20 hover:bg-black/40 text-white h-12 w-12 rounded-full flex items-center justify-center"><ChevronDown className="h-8 w-8 -rotate-90" /></button>
-          <button onClick={next} className="absolute top-1/2 -translate-y-1/2 right-0 mx-4 z-20 bg-black/20 hover:bg-black/40 text-white h-12 w-12 rounded-full flex items-center justify-center"><ChevronDown className="h-8 w-8 rotate-90" /></button>
+          <button onClick={prev} className="absolute top-1/2 -translate-y-1/2 left-0 mx-4 z-20 bg-black/20 hover:bg-black/40 text-white h-12 w-12 rounded-full flex items-center justify-center"><ChevronLeft className="h-8 w-8" /></button>
+          <button onClick={next} className="absolute top-1/2 -translate-y-1/2 right-0 mx-4 z-20 bg-black/20 hover:bg-black/40 text-white h-12 w-12 rounded-full flex items-center justify-center"><ChevronRight className="h-8 w-8" /></button>
         </>
       )}
       {navigation.showDots && !isSingle && (
@@ -454,7 +454,7 @@ export function SiteRenderer({ content, businessName }: { content: any; business
   const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('up');
   const [lastScrollY, setLastScrollY] = useState(0);
   const [currentPage, setCurrentPage] = useState(() => {
-    const path = window.location.pathname.slice(1);
+    let path = window.location.pathname.replace(/^\/+|\/$/, '').trim().toLowerCase();
     return path || '';
   });
 
@@ -463,7 +463,8 @@ export function SiteRenderer({ content, businessName }: { content: any; business
 
   const { activeSections, showHero, activePage } = useMemo(() => {
     if (pages && pages.length > 0) {
-      const page = pages.find((p: any) => p.slug === currentPage) || pages.find((p: any) => p.isHome);
+      const normalizedCurrent = (currentPage || '').trim().toLowerCase();
+      const page = pages.find((p: any) => (p.slug || '').trim().toLowerCase() === normalizedCurrent) || pages.find((p: any) => p.isHome);
       if (page) return { activePage: page, activeSections: page.sections || [], showHero: page.isHome };
     }
     return { activePage: null, activeSections: rawSections || [], showHero: true };
@@ -515,7 +516,7 @@ export function SiteRenderer({ content, businessName }: { content: any; business
     setCurrentPage(slug); const newPath = slug && slug !== 'home' ? '/' + slug : '/'; window.history.pushState({}, '', newPath); window.scrollTo(0, 0); setMobileMenuOpen(false);
   };
 
-  useEffect(() => { const onPop = () => { const path = window.location.pathname.slice(1); setCurrentPage(path || ''); }; window.addEventListener('popstate', onPop); return () => window.removeEventListener('popstate', onPop); }, []);
+  useEffect(() => { const onPop = () => { const path = window.location.pathname.replace(/^/+|/$/, '').trim().toLowerCase(); setCurrentPage(path || ''); }; window.addEventListener('popstate', onPop); return () => window.removeEventListener('popstate', onPop); }, []);
 
   // Dynamic per-page SEO: update document title + meta tags when page changes
   useEffect(() => {
@@ -1124,7 +1125,7 @@ export function SiteRenderer({ content, businessName }: { content: any; business
                       {tabs[activeTab] && (
                         <div className="p-4 sm:p-6 bg-card border border-border rounded-xl">
                           {tabs[activeTab].title && <h3 className="text-xl font-semibold mb-3">{tabs[activeTab].title}</h3>}
-                          {tabs[activeTab].body && <div className="text-muted-foreground prose max-w-none" dangerouslySetInnerHTML={{ __html: tabs[activeTab].body }} />}
+                          {(tabs[activeTab].body || tabs[activeTab].content || tabs[activeTab].description) && <div className="text-muted-foreground prose max-w-none" dangerouslySetInnerHTML={{ __html: tabs[activeTab].body || tabs[activeTab].content || tabs[activeTab].description }} />}
                           {tabs[activeTab].image && <img src={tabs[activeTab].image} alt={tabs[activeTab].title || ''} className="rounded-lg mt-4 w-full object-cover" />}
                         </div>
                       )}
