@@ -151,38 +151,6 @@
           }
         },
         {
-          "id": "featured-ministries",
-          "body": "Beyond our Sunday services, Dallas Brethren Assembly offers various ministries designed to nurture faith at every stage of life. From engaging children's programs to insightful adult Bible studies, there's a place for everyone to belong and grow.",
-          "type": "features",
-          "items": [
-            {
-              "icon": "👧",
-              "name": "Children's Ministry",
-              "image": "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&q=80",
-              "description": "Teaching our youngest members about God's love through engaging lessons and activities."
-            },
-            {
-              "icon": "📚",
-              "name": "Adult Bible Studies",
-              "image": "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=600&q=80",
-              "description": "Deepening our understanding of scripture through regular, interactive study groups."
-            },
-            {
-              "icon": "🤝",
-              "name": "Community Outreach",
-              "image": "https://images.unsplash.com/photo-1552581234-26160f608093?w=600&q=80",
-              "description": "Serving our neighbors and sharing the Gospel through local initiatives and partnerships."
-            }
-          ],
-          "title": "Growing Together in Faith",
-          "settings": {
-            "isVisible": false,
-            "customHtml": "<div class=\"bg-[#FFFFFF] py-24 sm:py-32 font-sans antialiased text-[#64748B]\"><div class=\"mx-auto max-w-7xl px-6 lg:px-8\"><div class=\"mx-auto max-w-3xl text-center mb-20\"><h2 class=\"text-base font-semibold leading-7 tracking-widest text-[#0F172A] uppercase\">Our Ministries</h2>\n            <p class=\"mt-4 text-4xl font-extrabold tracking-tight text-[#0F172A] sm:text-6xl\">\n                Growing Together in Faith\n            </p>\n            <div class=\"mt-6 flex justify-center\">\n                <div class=\"h-1.5 w-24 rounded-full bg-[#0F172A]\"></div>\n            </div>\n            <p class=\"mt-8 text-lg leading-8 text-[#64748B] max-w-2xl mx-auto\">\n                Beyond our Sunday services, Dallas Brethren Assembly offers various ministries designed to nurture faith at every stage of life. From engaging children's programs to insightful adult Bible studies, there's a place for everyone to belong and grow.\n            </p>\n        </div>\n\n        \n        <div class=\"grid grid-cols-1 gap-12 lg:grid-cols-3 lg:gap-8\">\n            \n            <div class=\"group relative flex flex-col overflow-hidden rounded-3xl bg-[#F8FAFC] transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 border border-slate-100\">\n                <div class=\"aspect-[16/10] overflow-hidden\">\n                    <img src=\"https://foemfjmfrulilubshnwn.supabase.co/storage/v1/object/public/site-images/8d899164-196e-4bcc-8b6f-7a5b62b61fc8/1772163432266/slide02.jpg\" alt=\"Children's Ministry\" class=\"h-full w-full object-cover transition-transform duration-700 group-hover:scale-110\">\n                </div>\n                <div class=\"relative p-8\">\n                    <div class=\"absolute -top-10 left-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-white shadow-xl text-4xl group-hover:rotate-6 transition-transform\">\n                        👧\n                    </div>\n                    <h3 class=\"mt-6 text-2xl font-bold text-[#0F172A]\">Children's Ministry</h3>\n                    <p class=\"mt-4 text-base leading-7\">\n                        Teaching our youngest members about God's love through engaging lessons and activities.\n                    </p>\n                    <span style=\"color: rgb(38, 38, 38); font-size: 0.875rem; font-weight: 700;\">                </span></div>\n            </div>\n\n            \n            <div class=\"group relative flex flex-col overflow-hidden rounded-3xl bg-[#F8FAFC] transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 border border-slate-100\">\n                <div class=\"aspect-[16/10] overflow-hidden\">\n                    <img src=\"https://foemfjmfrulilubshnwn.supabase.co/storage/v1/object/public/site-images/8d899164-196e-4bcc-8b6f-7a5b62b61fc8/church%20(1).webp\" alt=\"Adult Bible Studies\" class=\"h-full w-full object-cover transition-transform duration-700 group-hover:scale-110\">\n                </div>\n                <div class=\"relative p-8\">\n                    <div class=\"absolute -top-10 left-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-white shadow-xl text-4xl group-hover:rotate-6 transition-transform\">\n                        📚\n                    </div>\n                    <h3 class=\"mt-6 text-2xl font-bold text-[#0F172A]\">Adult Bible Studies</h3>\n                    <p class=\"mt-4 text-base leading-7\">\n                        Deepening our understanding of scripture through regular, interactive study groups.\n                    </p>\n<br></div>\n            </div>\n\n            \n            <div class=\"group relative flex flex-col overflow-hidden rounded-3xl bg-[#F8FAFC] transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 border border-slate-100\">\n                <div class=\"aspect-[16/10] overflow-hidden\">\n                    <img src=\"https://foemfjmfrulilubshnwn.supabase.co/storage/v1/object/public/site-images/8d899164-196e-4bcc-8b6f-7a5b62b61fc8/church%20(1).webp\" alt=\"Community Outreach\" class=\"h-full w-full object-cover transition-transform duration-700 group-hover:scale-110\">\n                </div>\n                <div class=\"relative p-8\">\n                    <div class=\"absolute -top-10 left-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-white shadow-xl text-4xl group-hover:rotate-6 transition-transform\">\n                        🤝\n                    </div>\n                    <h3 class=\"mt-6 text-2xl font-bold text-[#0F172A]\">Community Outreach</h3>\n                    <p class=\"mt-4 text-base leading-7\">\n                        Serving our neighbors and sharing the Gospel through local initiatives and partnerships.\n                    </p>\n<br></div>\n            </div>\n        </div>\n\n        \n        <div class=\"mt-24 rounded-3xl bg-[#0F172A] p-12 overflow-hidden relative\">\n            <div class=\"absolute top-0 right-0 -mt-10 -mr-10 h-64 w-64 rounded-full bg-slate-800 opacity-20 blur-3xl\"></div>\n            <div class=\"relative z-10 flex flex-col md:flex-row items-center justify-between gap-8\">\n                <div>\n                    <h4 class=\"text-2xl font-bold text-white\">Join our community this week</h4>\n                    <p class=\"text-slate-400 mt-2\">There is always a place for you at Dallas Brethren Assembly.</p>\n                </div>\n                <a href=\"#\" class=\"rounded-full bg-white px-8 py-4 text-sm font-bold text-[#0F172A] shadow-lg transition-all hover:bg-[#F8FAFC] hover:scale-105 active:scale-95\">\n                    View Schedule\n                </a>\n            </div>\n        </div>\n    </div>\n</div>",
-            "columnLayout": "3",
-            "layoutVariant": "ai-custom"
-          }
-        },
-        {
           "id": "home-cta",
           "body": "We invite you to join us and discover a place where faith grows and lives are transformed. We can't wait to meet you!",
           "type": "cta",
@@ -674,38 +642,6 @@
             "textAlign": "left"
           }
         }
-      }
-    },
-    {
-      "id": "featured-ministries",
-      "body": "Beyond our Sunday services, Dallas Brethren Assembly offers various ministries designed to nurture faith at every stage of life. From engaging children's programs to insightful adult Bible studies, there's a place for everyone to belong and grow.",
-      "type": "features",
-      "items": [
-        {
-          "icon": "👧",
-          "name": "Children's Ministry",
-          "image": "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&q=80",
-          "description": "Teaching our youngest members about God's love through engaging lessons and activities."
-        },
-        {
-          "icon": "📚",
-          "name": "Adult Bible Studies",
-          "image": "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=600&q=80",
-          "description": "Deepening our understanding of scripture through regular, interactive study groups."
-        },
-        {
-          "icon": "🤝",
-          "name": "Community Outreach",
-          "image": "https://images.unsplash.com/photo-1552581234-26160f608093?w=600&q=80",
-          "description": "Serving our neighbors and sharing the Gospel through local initiatives and partnerships."
-        }
-      ],
-      "title": "Growing Together in Faith",
-      "settings": {
-        "isVisible": false,
-        "customHtml": "<div class=\"bg-[#FFFFFF] py-24 sm:py-32 font-sans antialiased text-[#64748B]\"><div class=\"mx-auto max-w-7xl px-6 lg:px-8\"><div class=\"mx-auto max-w-3xl text-center mb-20\"><h2 class=\"text-base font-semibold leading-7 tracking-widest text-[#0F172A] uppercase\">Our Ministries</h2>\n            <p class=\"mt-4 text-4xl font-extrabold tracking-tight text-[#0F172A] sm:text-6xl\">\n                Growing Together in Faith\n            </p>\n            <div class=\"mt-6 flex justify-center\">\n                <div class=\"h-1.5 w-24 rounded-full bg-[#0F172A]\"></div>\n            </div>\n            <p class=\"mt-8 text-lg leading-8 text-[#64748B] max-w-2xl mx-auto\">\n                Beyond our Sunday services, Dallas Brethren Assembly offers various ministries designed to nurture faith at every stage of life. From engaging children's programs to insightful adult Bible studies, there's a place for everyone to belong and grow.\n            </p>\n        </div>\n\n        \n        <div class=\"grid grid-cols-1 gap-12 lg:grid-cols-3 lg:gap-8\">\n            \n            <div class=\"group relative flex flex-col overflow-hidden rounded-3xl bg-[#F8FAFC] transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 border border-slate-100\">\n                <div class=\"aspect-[16/10] overflow-hidden\">\n                    <img src=\"https://foemfjmfrulilubshnwn.supabase.co/storage/v1/object/public/site-images/8d899164-196e-4bcc-8b6f-7a5b62b61fc8/1772163432266/slide02.jpg\" alt=\"Children's Ministry\" class=\"h-full w-full object-cover transition-transform duration-700 group-hover:scale-110\">\n                </div>\n                <div class=\"relative p-8\">\n                    <div class=\"absolute -top-10 left-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-white shadow-xl text-4xl group-hover:rotate-6 transition-transform\">\n                        👧\n                    </div>\n                    <h3 class=\"mt-6 text-2xl font-bold text-[#0F172A]\">Children's Ministry</h3>\n                    <p class=\"mt-4 text-base leading-7\">\n                        Teaching our youngest members about God's love through engaging lessons and activities.\n                    </p>\n                    <span style=\"color: rgb(38, 38, 38); font-size: 0.875rem; font-weight: 700;\">                </span></div>\n            </div>\n\n            \n            <div class=\"group relative flex flex-col overflow-hidden rounded-3xl bg-[#F8FAFC] transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 border border-slate-100\">\n                <div class=\"aspect-[16/10] overflow-hidden\">\n                    <img src=\"https://foemfjmfrulilubshnwn.supabase.co/storage/v1/object/public/site-images/8d899164-196e-4bcc-8b6f-7a5b62b61fc8/church%20(1).webp\" alt=\"Adult Bible Studies\" class=\"h-full w-full object-cover transition-transform duration-700 group-hover:scale-110\">\n                </div>\n                <div class=\"relative p-8\">\n                    <div class=\"absolute -top-10 left-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-white shadow-xl text-4xl group-hover:rotate-6 transition-transform\">\n                        📚\n                    </div>\n                    <h3 class=\"mt-6 text-2xl font-bold text-[#0F172A]\">Adult Bible Studies</h3>\n                    <p class=\"mt-4 text-base leading-7\">\n                        Deepening our understanding of scripture through regular, interactive study groups.\n                    </p>\n<br></div>\n            </div>\n\n            \n            <div class=\"group relative flex flex-col overflow-hidden rounded-3xl bg-[#F8FAFC] transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 border border-slate-100\">\n                <div class=\"aspect-[16/10] overflow-hidden\">\n                    <img src=\"https://foemfjmfrulilubshnwn.supabase.co/storage/v1/object/public/site-images/8d899164-196e-4bcc-8b6f-7a5b62b61fc8/church%20(1).webp\" alt=\"Community Outreach\" class=\"h-full w-full object-cover transition-transform duration-700 group-hover:scale-110\">\n                </div>\n                <div class=\"relative p-8\">\n                    <div class=\"absolute -top-10 left-8 flex h-20 w-20 items-center justify-center rounded-2xl bg-white shadow-xl text-4xl group-hover:rotate-6 transition-transform\">\n                        🤝\n                    </div>\n                    <h3 class=\"mt-6 text-2xl font-bold text-[#0F172A]\">Community Outreach</h3>\n                    <p class=\"mt-4 text-base leading-7\">\n                        Serving our neighbors and sharing the Gospel through local initiatives and partnerships.\n                    </p>\n<br></div>\n            </div>\n        </div>\n\n        \n        <div class=\"mt-24 rounded-3xl bg-[#0F172A] p-12 overflow-hidden relative\">\n            <div class=\"absolute top-0 right-0 -mt-10 -mr-10 h-64 w-64 rounded-full bg-slate-800 opacity-20 blur-3xl\"></div>\n            <div class=\"relative z-10 flex flex-col md:flex-row items-center justify-between gap-8\">\n                <div>\n                    <h4 class=\"text-2xl font-bold text-white\">Join our community this week</h4>\n                    <p class=\"text-slate-400 mt-2\">There is always a place for you at Dallas Brethren Assembly.</p>\n                </div>\n                <a href=\"#\" class=\"rounded-full bg-white px-8 py-4 text-sm font-bold text-[#0F172A] shadow-lg transition-all hover:bg-[#F8FAFC] hover:scale-105 active:scale-95\">\n                    View Schedule\n                </a>\n            </div>\n        </div>\n    </div>\n</div>",
-        "columnLayout": "3",
-        "layoutVariant": "ai-custom"
       }
     },
     {
